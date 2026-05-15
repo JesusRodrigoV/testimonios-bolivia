@@ -1,0 +1,70 @@
+
+<div
+  class="search-field"
+  [class.desktop-search]="!isMobile()"
+  [class.mobile-search]="isMobile()"
+  [class.active]="isMobile() && isActive()"
+>
+  <div class="search-wrapper">
+    <div class="search-border"></div>
+    <div golden class="search-input-wrapper">
+      <i class="bx bx-search search-icon"></i>
+      <input
+        type="text"
+        class="input"
+        placeholder="Busca por título, autor, lugar o fecha"
+        [(ngModel)]="searchQuery"
+        (input)="onQueryChange()"
+        (keyup.enter)="onSearch()"
+        #searchInput
+        aria-label="Buscar testimonios por título, autor, lugar o fecha"
+      />
+        @if (searchQuery) {
+        <button
+          mat-icon-button
+          (click)="clearSearch()"
+          matTooltip="Limpiar búsqueda"
+          golden
+        >
+          <i class="bx bx-x"></i>
+        </button>
+        }
+      @if (!isMobile() || (isMobile() && isActive())) {
+      <button
+        mat-icon-button
+          matTooltip="Filtros de búsqueda"
+          [matMenuTriggerFor]="filterMenu"
+          golden
+      >
+        <i class="bx bx-filter"></i>
+      </button>
+      }
+      @if (isMobile() && isActive()) {
+      <button
+        mat-icon-button
+        class="close-search"
+        (click)="toggleMobileSearch()"
+        matTooltip="Cerrar búsqueda"
+        golden
+      >
+        <i class="bx bx-x"></i>
+      </button>
+      }
+    </div>
+  </div>
+</div>
+
+<mat-menu #filterMenu="matMenu">
+  <button mat-menu-item (click)="setFilter('recent')" golden>
+    <i class="bx bx-calendar"></i>
+    Más recientes
+  </button>
+  <button mat-menu-item (click)="setFilter('popular')" golden>
+    <i class="bx bx-trending-up"></i>
+    Más populares
+  </button>
+  <button mat-menu-item (click)="setFilter('category')" golden>
+    <i class="bx bx-category"></i>
+    Por categoría
+  </button>
+</mat-menu>

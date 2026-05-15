@@ -1,0 +1,90 @@
+<footer class="footer" role="contentinfo">
+  <div class="footer-border"></div>
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <img
+          height="100"
+          width="100"
+          [ngSrc]="brand.logo"
+          priority
+          [alt]="brand.title"
+          class="footer-logo-img"
+          aria-label="Logotipo de Legado Bolivia"
+        />
+        <h3 class="footer-title manuscript-text">{{ brand.title }}</h3>
+      </div>
+      <p class="footer-description">{{ brand.description }}</p>
+      <button
+        mat-raised-button
+        class="footer-cta"
+        [routerLink]="cta.link"
+        [attr.aria-label]="cta.ariaLabel"
+      >
+        <i class="bx bx-plus"></i>
+        {{ cta.text }}
+      </button>
+    </div>
+
+    <div class="footer-useful-links">
+      <h4 class="footer-section-title">Enlaces Útiles</h4>
+      <ul class="footer-links-list">
+        @for (link of usefulLinks; track link.url) {
+          @if (link.disabled) {
+            <li>
+              <span
+                class="footer-link disabled"
+                aria-disabled="true"
+                [attr.aria-label]="link.ariaLabel"
+              >{{ link.name }}</span>
+            </li>
+          } @else {
+            <li>
+              <a
+                [routerLink]="link.url"
+                class="footer-link"
+                [attr.aria-label]="link.ariaLabel"
+              >{{ link.name }}</a>
+            </li>
+          }
+        }
+      </ul>
+    </div>
+
+    <div class="footer-history">
+      <h4 class="footer-section-title">Bicentenario</h4>
+
+      <div class="footer-stats">
+        <p
+          class="footer-testimony-count"
+          aria-live="polite"
+          aria-label="Número de historias compartidas en Legado Bolivia"
+        >
+          {{ numberOfTestimonies() }} Historias Compartidas
+        </p>
+      </div>
+      <div class="footer-social">
+        <h4 class="footer-section-title">Síguenos</h4>
+        <div class="footer-social-links">
+          @for (link of socialLinks; track link.url) {
+            <a
+              [href]="link.url"
+              class="footer-social-link"
+              [target]="link.external ? '_blank' : undefined"
+              [rel]="link.external ? 'noopener noreferrer' : undefined"
+              [attr.aria-label]="'Síguenos en ' + link.name"
+            >
+              <i [class]="link.icon"></i>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copyright">
+      &copy; {{ currentYear }} Bicentenario de Bolivia | AXL
+    </p>
+  </div>
+</footer>

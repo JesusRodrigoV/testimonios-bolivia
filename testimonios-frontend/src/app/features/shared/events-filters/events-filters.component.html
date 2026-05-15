@@ -1,0 +1,15 @@
+<mat-chip-listbox
+  class="mat-mdc-chip-set-horizontal"
+  aria-label="Filtrar por eventos"
+  (change)="onSelectionChange($event)"
+>
+  @for (evento of events; track evento.id) {
+    <mat-chip-option
+      [selectable]="true"
+      [selected]="selectedEvents().includes(evento.id)"
+      (selectionChange)="toggleEvent(evento.id)"
+    >
+      {{ evento.name }}
+    </mat-chip-option>
+  }
+</mat-chip-listbox>

@@ -1,0 +1,204 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h2>{{ testimony.title }}</h2>
+    <button mat-icon-button (click)="closeModal()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="main-content">
+      <p class="description">{{ testimony.description }}</p>
+      <div class="media">
+        @if (testimony.format === MediaFormat.Video) {
+          <app-video-player [videoUrl]="testimony.url" />
+        } @else if (testimony.format === MediaFormat.Audio) {
+          <audio [src]="testimony.url" controls></audio>
+        }
+      </div>
+      <div class="actions">
+        <button
+          mat-raised-button
+          class="action-btn favorite-btn"
+          (click)="addToFavorites()"
+          matTooltip="Favorito"
+        >
+          <mat-icon>{{ favoritesStore.isFavorite(testimony.id) ? "favorite" : "favorite_border" }}</mat-icon>
+          {{ testimony.favoriteCount}}
+        </button>
+        <button
+          mat-icon-button
+          class="action-btn share-btn"
+          (click)="addToCollection()"
+          matTooltip="Guardar en una colección"
+        >
+          <mat-icon>label</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="action-btn share-btn"
+          (click)="shareTestimony()"
+          matTooltip="Compartir"
+        >
+          <mat-icon>share</mat-icon>
+        </button>
+        @if (canDownload()) {
+        <button
+          mat-icon-button
+          class="action-btn download-btn"
+          (click)="downloadTestimony()"
+          matTooltip="Descargar"
+        >
+          <mat-icon>download</mat-icon>
+        </button>
+        }
+      </div>
+      <div class="meta">
+        <div class="meta-header">
+          <p>{{ relativeTime() }}</p>
+          <button
+            mat-icon-button
+            (click)="toggleMeta()"
+            class="meta-toggle-btn"
+          >
+            <mat-icon>{{
+              isMetaExpanded() ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+        </div>
+        <div class="meta-details" [ngClass]="{ expanded: isMetaExpanded() }">
+          <p>Subido por: {{ testimony.author }}</p>
+          <p>Fecha: {{ testimony.createdAt | date: "medium" }}</p>
+          <p>Categorías: {{ testimony.categories.join(", ") || "Ninguna" }}</p>
+          <p>Etiquetas: {{ testimony.tags.join(", ") || "Ninguna" }}</p>
+          @if (testimony.event) { <p>Evento: {{ testimony.event }}</p> }
+        </div>
+      </div>
+      @if (testimony.format !== MediaFormat.Text) {
+      <div class="transcription">
+        <div class="transcription-header">
+          <p>Transcripción</p>
+          <button
+            mat-icon-button
+            (click)="toggleTranscription()"
+            class="transcription-toggle-btn"
+          >
+            <mat-icon>{{
+              isTranscriptionExpanded() ? "expand_less" : "expand_more"
+            }}</mat-icon>
+          </button>
+        </div>
+        <div
+          class="transcription-content"
+          [ngClass]="{ expanded: isTranscriptionExpanded() }"
+        >
+          @if (transcripciones.length > 0) {
+            <div class="transcription-text">
+              @for (transcripcion of transcripciones(); track transcripcion.id_transcripcion) {
+                <div class="transcription-item">
+                  <p>{{ transcripcion.contenido }}</p>
+                  <p class="transcription-meta">
+                    Idioma: {{ transcripcion.idioma }} |
+                    Creado: {{ transcripcion.fecha_creacion | date: 'short' }} |
+                    Por: {{ transcripcion.usuarios?.nombre || 'Desconocido' }}
+                  </p>
+                </div>
+              }
+            </div>
+          } @else if (canRequestTranscription()) {
+            <div class="transcription-empty">
+              <p>No hay transcripciones disponibles.</p>
+              <button
+                mat-raised-button
+                color="accent"
+                (click)="requestTranscription()"
+              >
+                Solicitar Transcripción
+              </button>
+            </div>
+          } @else {
+            <p>No hay transcripciones disponibles. Inicia sesión para solicitar una.</p>
+          }
+        </div>
+      </div>
+      }
+      <div class="rating-section">
+        <p class="rating-title">Calificar este testimonio</p>
+        @if (currentRating() > 0 && !isRatingLoading()) {
+        <p class="rating-status">
+          Tu calificación: {{ currentRating() }} estrella{{ currentRating() === 1 ? '' : 's' }}
+        </p>
+        }
+        <div class="rating" [ngClass]="{ 'loading': isRatingLoading() }">
+          <input
+            type="radio"
+            id="star-5"
+            name="star-radio"
+            value="5"
+            [(ngModel)]="currentRating"
+            (change)="rateTestimony(5)"
+            [disabled]="!authStore.isAuthenticated() || isRatingLoading()"
+          />
+          <label for="star-5">
+            <mat-icon>star</mat-icon>
+          </label>
+          <input
+            type="radio"
+            id="star-4"
+            name="star-radio"
+            value="4"
+            [(ngModel)]="currentRating"
+            (change)="rateTestimony(4)"
+            [disabled]="!authStore.isAuthenticated() || isRatingLoading()"
+          />
+          <label for="star-4">
+            <mat-icon>star</mat-icon>
+          </label>
+          <input
+            type="radio"
+            id="star-3"
+            name="star-radio"
+            value="3"
+            [(ngModel)]="currentRating"
+            (change)="rateTestimony(3)"
+            [disabled]="!authStore.isAuthenticated() || isRatingLoading()"
+          />
+          <label for="star-3">
+            <mat-icon>star</mat-icon>
+          </label>
+          <input
+            type="radio"
+            id="star-2"
+            name="star-radio"
+            value="2"
+            [(ngModel)]="currentRating"
+            (change)="rateTestimony(2)"
+            [disabled]="!authStore.isAuthenticated() || isRatingLoading()"
+          />
+          <label for="star-2">
+            <mat-icon>star</mat-icon>
+          </label>
+          <input
+            type="radio"
+            id="star-1"
+            name="star-radio"
+            value="1"
+            [(ngModel)]="currentRating"
+            (change)="rateTestimony(1)"
+            [disabled]="!authStore.isAuthenticated() || isRatingLoading()"
+          />
+          <label for="star-1">
+            <mat-icon>star</mat-icon>
+          </label>
+        </div>
+        @if (!authStore.isAuthenticated()) {
+          <p class="rating-login">Inicia sesión para calificar este testimonio.</p>
+        }
+      </div>
+    </div>
+    <div class="comments-sidebar">
+      <app-testimony-comments
+        [testimonyId]="testimony.id"
+      ></app-testimony-comments>
+    </div>
+  </div>
+</div>

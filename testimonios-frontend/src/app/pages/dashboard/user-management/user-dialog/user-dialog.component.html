@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{ data.id_usuario ? "Editar" : "Crear" }} Usuario</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required type="email" />
+    </mat-form-field>
+
+    @if (!data.id_usuario) {
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          type="password"
+          [required]="!data.id_usuario"
+        />
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="id_rol" required>
+        <mat-option [value]="1">Admin</mat-option>
+        <mat-option [value]="2">Curador</mat-option>
+        <mat-option [value]="3">Investigador</mat-option>
+        <mat-option [value]="4">Visitante</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Biografía</mat-label>
+      <textarea matInput formControlName="biografia" rows="3"></textarea>
+    </mat-form-field>
+
+    <!-- Agregar campo para URL de imagen de perfil -->
+    <mat-form-field appearance="outline">
+      <mat-label>URL de imagen de perfil</mat-label>
+      <input matInput formControlName="profile_image" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!form.valid"
+    (click)="onSubmit()"
+  >
+    {{ data.id_usuario ? "Actualizar" : "Crear" }}
+  </button>
+</mat-dialog-actions>

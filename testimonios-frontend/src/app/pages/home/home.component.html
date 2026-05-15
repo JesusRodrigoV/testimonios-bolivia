@@ -1,0 +1,38 @@
+<div class="home-container">
+  <app-hero-section />
+  <section class="highlighted-section">
+    <div class="section-header">
+      <h2>Testimonios Destacados</h2>
+      <p class="section-subtitle">Los testimonios mejor calificados por nuestra comunidad</p>
+    </div>
+    <div class="highlighted-feed">
+      @if (loading()) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando testimonios...</p>
+      </div>
+      } @else if (highlightedTestimonies().length === 0) {
+      <p class="empty-state">Aún no hay testimonios destacados.</p>
+      } @else {
+      <swiper-container
+        class="carousel"
+        navigation="true"
+        pagination="true"
+        slides-per-view="1"
+        space-between="16"
+        touch-events-target="container"
+        grab-cursor="true"
+        [loop]="highlightedTestimonies().length >= 4"
+        autoplay='{"delay": 5000, "disableOnInteraction": false}'
+        breakpoints='{"640": {"slidesPerView": 2}, "1024": {"slidesPerView": 3}}'
+      >
+        @for (testimony of highlightedTestimonies(); track testimony.id) {
+        <swiper-slide>
+          <app-testimony [testimony]="testimony" />
+        </swiper-slide>
+        }
+      </swiper-container>
+      }
+    </div>
+  </section>
+</div>

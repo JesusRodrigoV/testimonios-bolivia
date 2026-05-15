@@ -1,0 +1,56 @@
+/* search-bar.component.scss */
+.search-input-wrapper {
+  position: relative; // Añadir posición relativa
+  background: var(--header-bg-color);
+  border-radius: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border: 1px solid var(--header-border-color);
+  transition: all 0.3s ease;
+  
+  &:focus-within {
+    border-color: var(--header-hover-color);
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2);
+  }
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  height: 100%;
+  padding: 0 16px 0 48px; // Ajustar padding para el icono
+  font-size: 16px;
+  color: var(--header-text-color);
+  position: relative; // Añadir posición relativa
+  z-index: 500; // Asegurar que esté por encima de otros elementos
+
+  &::placeholder {
+    color: var(--header-text-color);
+    opacity: 0.7;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  font-size: 20px;
+  color: var(--header-text-color);
+  opacity: 0.7;
+  z-index: 501; // Asegurar posición correcta
+}
+
+button[mat-icon-button] {
+  margin-left: 8px;
+  z-index: 3;
+  
+  i {
+    font-size: 24px;
+  }
+}

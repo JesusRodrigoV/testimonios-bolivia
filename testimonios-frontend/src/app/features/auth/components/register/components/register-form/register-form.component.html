@@ -1,0 +1,148 @@
+<mat-stepper [linear]="true" #stepper>
+  <!-- Step 1: Personal Information -->
+  <mat-step [stepControl]="personalInfo" errorMessage="Por favor completa los campos requeridos">
+    <ng-template matStepLabel>Información Personal</ng-template>
+    <form [formGroup]="personalInfo">
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>person</mat-icon>
+          <input
+            class="custom-input"
+            type="text"
+            placeholder="Nombre de usuario"
+            formControlName="nombre"
+          />
+        </div>
+        @if (personalInfo.get('nombre')?.errors?.['required'] && personalInfo.get('nombre')?.touched) {
+          <span class="error-text">El nombre es requerido</span>
+        }
+        @if (personalInfo.get('nombre')?.errors?.['minlength'] && personalInfo.get('nombre')?.touched) {
+          <span class="error-text">El nombre debe tener al menos 3 caracteres</span>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>description</mat-icon>
+          <textarea
+            class="custom-input"
+            placeholder="Biografía (opcional)"
+            formControlName="biografia"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="stepper-actions">
+        <button mat-button matStepperNext>Siguiente</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Step 2: Account Details -->
+  <mat-step [stepControl]="accountDetails" errorMessage="Por favor completa los campos requeridos">
+    <ng-template matStepLabel>Detalles de la Cuenta</ng-template>
+    <form [formGroup]="accountDetails">
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>mail</mat-icon>
+          <input
+            class="custom-input"
+            type="email"
+            placeholder="Email"
+            formControlName="email"
+          />
+        </div>
+        @if (accountDetails.get('email')?.errors?.['required'] && accountDetails.get('email')?.touched) {
+          <span class="error-text">El email es requerido</span>
+        }
+        @if (accountDetails.get('email')?.errors?.['email'] && accountDetails.get('email')?.touched) {
+          <span class="error-text">Email inválido</span>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>lock</mat-icon>
+          <input
+            class="custom-input"
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Contraseña"
+            formControlName="password"
+          />
+          <button
+            class="visibility-toggle"
+            type="button"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        @if (accountDetails.get('password')?.errors?.['required'] && accountDetails.get('password')?.touched) {
+          <span class="error-text">La contraseña es requerida</span>
+        }
+        @if (accountDetails.get('password')?.errors?.['minlength'] && accountDetails.get('password')?.touched) {
+          <span class="error-text">La contraseña debe tener al menos 6 caracteres</span>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>lock</mat-icon>
+          <input
+            class="custom-input"
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            placeholder="Confirmar Contraseña"
+            formControlName="confirmPassword"
+          />
+          <button
+            class="visibility-toggle"
+            type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword"
+          >
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        @if (accountDetails.get('confirmPassword')?.errors?.['required'] && accountDetails.get('confirmPassword')?.touched) {
+          <span class="error-text">Confirma tu contraseña</span>
+        }
+        @if (accountDetails.errors?.['mismatch'] && accountDetails.get('confirmPassword')?.touched) {
+          <span class="error-text">Las contraseñas no coinciden</span>
+        }
+      </div>
+
+      <div class="stepper-actions">
+        <button mat-button matStepperPrevious>Regresar</button>
+        <button mat-button matStepperNext>Siguiente</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Step 3: Confirmation -->
+  <mat-step>
+    <ng-template matStepLabel>Confirmación</ng-template>
+    <div class="confirmation">
+      <h3>Resumen de Registro</h3>
+      <p><strong>Nombre:</strong> {{ personalInfo.get('nombre')?.value || 'No proporcionado' }}</p>
+      <p><strong>Email:</strong> {{ accountDetails.get('email')?.value || 'No proporcionado' }}</p>
+      <p><strong>Biografía:</strong> {{ personalInfo.get('biografia')?.value || 'No proporcionada' }}</p>
+    </div>
+    <div class="login-link">
+      <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+    <div class="stepper-actions">
+      <button mat-button matStepperPrevious>Regresar</button>
+      <button
+        mat-raised-button
+        class="action-button"
+        (click)="submit()"
+        [disabled]="loading()"
+      >
+        {{ loading() ? 'Registrando...' : buttonText() }}
+      </button>
+    </div>
+    @if (error()) {
+      <div class="error-message">{{ error() }}</div>
+    }
+  </mat-step>
+</mat-stepper>

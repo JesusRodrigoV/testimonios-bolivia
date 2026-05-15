@@ -1,0 +1,11 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <app-login-header subtitle="Iniciar Sesión"></app-login-header>
+    <app-login-form
+      [buttonText]="'Iniciar sesión'"
+      [loading]="loading()"
+      [error]="error()"
+      (onSubmit)="onSubmit($event)"
+    ></app-login-form>
+  </mat-card>
+</div>

@@ -1,0 +1,111 @@
+<div class="edit-container">
+  <h2>Editar Testimonio</h2>
+  @if (loading()) {
+    <div class="loading">
+      <axl-spinner />
+      <p>Cargando testimonio...</p>
+    </div>
+  } @else if (testimony()) {
+    <div class="media-preview">
+      @if (testimony()?.format === MediaFormat.Video) {
+        <app-video-player [videoUrl]="testimony()!.url" />
+      } @else if (testimony()?.format === MediaFormat.Audio) {
+        <audio [src]="testimony()?.url" controls class="audio-player"></audio>
+      }
+      @if (testimony()?.latitude != null && testimony()?.longitude != null) {
+        <p class="location-info">
+          Ubicación: Latitud {{ testimony()?.latitude }}, Longitud {{ testimony()?.longitude }}
+        </p>
+      }
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="edit-form">
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="title" placeholder="Título del testimonio" />
+          @if (form.get('title')?.invalid && form.get('title')?.touched) {
+            <mat-error>El título debe tener al menos 3 caracteres</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="description" placeholder="Descripción del testimonio"></textarea>
+          @if (form.get('description')?.invalid && form.get('description')?.touched) {
+            <mat-error>La descripción debe tener al menos 5 caracteres</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Contenido</mat-label>
+          <textarea matInput formControlName="content" placeholder="Contenido del testimonio"></textarea>
+          @if (form.get('content')?.invalid && form.get('content')?.touched) {
+            <mat-error>El contenido debe tener al menos 5 caracteres</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Categorías</mat-label>
+          <mat-select formControlName="categories" multiple>
+            @for (category of categories(); track category.id_categoria) {
+              <mat-option [value]="category.nombre">{{ category.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Etiquetas</mat-label>
+          <mat-chip-grid #chipGrid formControlName="tags" aria-label="Selección de etiquetas">
+            @for (tag of form.get('tags')?.value ?? []; track tag) {
+              <mat-chip-row [removable]="true" (removed)="removeTag(tag)">
+                {{ tag }}
+                <button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+            <input
+              placeholder="Añadir etiqueta..."
+              [matChipInputFor]="chipGrid"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="true"
+              (matChipInputTokenEnd)="addTag($event)"
+              [formControl]="tagCtrl"
+              [matAutocomplete]="auto"
+            />
+          </mat-chip-grid>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTag($event)">
+            @for (tag of filteredTags(); track tag) {
+              <mat-option [value]="tag">{{ tag }}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Evento histórico (opcional)</mat-label>
+          <mat-select formControlName="eventId">
+            <mat-option [value]="null">Ninguno</mat-option>
+            @for (event of events(); track event.id) {
+              <mat-option [value]="event.id">{{ event.name }} ({{ event.date | date: 'yyyy-MM-dd' }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-button color="warn" type="button" (click)="cancel()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || submitting()">
+          @if (submitting()) {
+            <axl-spinner size="small" />
+          } @else {
+            Guardar
+          }
+        </button>
+      </div>
+    </form>
+  } @else {
+    <p>Error al cargar el testimonio.</p>
+  }
+</div>

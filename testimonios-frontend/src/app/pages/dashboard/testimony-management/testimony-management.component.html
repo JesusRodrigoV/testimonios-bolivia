@@ -1,0 +1,139 @@
+<div class="management-container">
+  <div class="header">
+    <h1>Gestión de Testimonios</h1>
+    <button mat-button (click)="refreshTestimonies()">
+      <i class="bx bx-refresh"></i>
+      Actualizar
+    </button>
+  </div>
+
+  <div class="filter-chips">
+    @for (filter of statusFilters; track filter.value) {
+      <button
+        class="chip"
+        [class.active]="selectedStatus() === filter.value"
+        (click)="setFilter(filter.value)"
+      >
+        {{ filter.label }}
+        @if (filter.value === StatusEnum.PENDIENTE) {
+          <span class="chip-badge">{{ testimonies.length }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  @if (total() > 0) {
+  <div class="table-info">
+    Mostrando {{ (page() - 1) * limit + 1 }}–{{ Math.min(page() * limit, total()) }} de {{ total() }} testimonios
+  </div>
+  }
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Estado</th>
+          <th>Categorías</th>
+          <th>Etiquetas</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (testimony of testimonies; track testimony.id) {
+        <tr>
+          <td class="text-muted">#{{ testimony.id }}</td>
+          <td>{{ testimony.title }}</td>
+          <td>{{ testimony.author }}</td>
+          <td>
+            <span [ngClass]="'status-badge status-' + testimony.status">
+              {{ testimony.status | titlecase }}
+            </span>
+          </td>
+          <td>{{ testimony.categories.join(", ") || "Ninguna" }}</td>
+          <td>{{ testimony.tags.join(", ") || "Ninguna" }}</td>
+          <td>
+            <div class="actions">
+              <button class="btn-icon view" (click)="openTestimonyDialog(testimony)" matTooltip="Ver detalles">
+                <i class="bx bx-show"></i>
+              </button>
+              @if (testimony.status === StatusEnum.PENDIENTE) {
+              <button class="btn-icon approve" (click)="validateTestimony(testimony.id, true)" matTooltip="Aprobar">
+                <i class="bx bx-check"></i>
+              </button>
+              <button class="btn-icon reject" (click)="validateTestimony(testimony.id, false)" matTooltip="Rechazar">
+                <i class="bx bx-x"></i>
+              </button>
+              }
+              <button class="btn-icon delete" (click)="deleteTestimony(testimony.id)" matTooltip="Eliminar">
+                <i class="bx bx-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }@empty {
+        <tr>
+          <td colspan="7" class="empty-state">
+            <i class="bx bx-inbox"></i>
+            <p>No hay testimonios para mostrar.</p>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (isLoading) {
+    <div class="loading-overlay">
+      <axl-spinner />
+    </div>
+    }
+  </div>
+
+  @if (totalPages > 1) {
+  <div class="pagination">
+    <button
+      class="page-btn"
+      [disabled]="page() === 1"
+      (click)="goToPage(page() - 1)"
+    >
+      <i class="bx bx-chevron-left"></i>
+      Anterior
+    </button>
+
+    @if (pages[0] > 1) {
+      <button class="page-btn" (click)="goToPage(1)">1</button>
+      @if (pages[0] > 2) {
+        <span class="page-ellipsis">…</span>
+      }
+    }
+
+    @for (p of pages; track p) {
+      <button
+        class="page-btn"
+        [class.active]="p === page()"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+    }
+
+    @if (pages[pages.length - 1] < totalPages) {
+      @if (pages[pages.length - 1] < totalPages - 1) {
+        <span class="page-ellipsis">…</span>
+      }
+      <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+    }
+
+    <button
+      class="page-btn"
+      [disabled]="page() === totalPages"
+      (click)="goToPage(page() + 1)"
+    >
+      Siguiente
+      <i class="bx bx-chevron-right"></i>
+    </button>
+  </div>
+  }
+</div>

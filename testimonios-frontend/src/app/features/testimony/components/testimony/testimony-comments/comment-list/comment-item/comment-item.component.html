@@ -1,0 +1,56 @@
+<div class="comment" [ngClass]="{ reply: isReply }">
+  <div class="comment-header">
+    <div class="avatar-container">
+      <img [ngSrc]="comment().usuarios.profile_image || '/assets/images/default-avatar.jpg'"
+        alt="Avatar de {{ comment().usuarios.nombre }}" class="avatar" width="40" height="40" />
+    </div>
+    <div class="user-info">
+      <div class="user-row">
+        <span class="username" [ngClass]="getRoleClass(comment().usuarios.rol.nombre)">
+          {{ comment().usuarios.nombre }}
+        </span>
+        @if(comment().usuarios.rol.nombre !== 'visitante'){
+        <span class="role-badge" [ngClass]="getRoleClass(comment().usuarios.rol.nombre)">
+          {{ comment().usuarios.rol.nombre | titlecase }}
+        </span>
+        }
+      </div>
+    </div>
+    <span class="comment-date">{{ comment().fecha_creacion | date: 'short' }}</span>
+  </div>
+
+  <p class="comment-content">{{ comment().contenido }}</p>
+
+  <div class="comment-actions">
+    <button mat-icon-button class="action-btn like-btn" (click)="toggleLike.emit(comment().id_comentario)" [disabled]="!isAuthenticated()"
+      [matTooltip]="isLiked() ? 'Quitar me gusta' : 'Me gusta'" size="small">
+      <mat-icon [ngClass]="{ liked: isLiked }">
+        {{ isLiked() ? 'thumb_up' : 'thumb_up_off_alt' }}
+      </mat-icon>
+      @if(likeCount() > 0){
+      <span class="like-count">{{ likeCount() }}</span>
+      }
+    </button>
+
+    <button mat-icon-button class="action-btn reply-btn" (click)="startReply.emit(comment().id_comentario)" [disabled]="!isAuthenticated()"
+      matTooltip="Responder" size="small">
+      <mat-icon>chat_bubble_outline</mat-icon>
+    </button>
+
+    @if (isAuthor()) {
+    <button mat-icon-button class="action-btn edit-btn" (click)="edit.emit(comment())" matTooltip="Editar" size="small">
+      <mat-icon>edit</mat-icon>
+    </button>
+    }
+
+    @if (isAuthor() || isAdmin()) {
+    <button mat-icon-button class="action-btn delete-btn" (click)="delete.emit(comment().id_comentario)" matTooltip="Eliminar" size="small">
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+    }
+  </div>
+
+  @if((comment().replies.length || 0) > 0){
+    <ng-content />
+  }
+</div>

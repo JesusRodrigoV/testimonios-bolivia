@@ -1,0 +1,43 @@
+<div class="collection-detail">
+  @if (loading()) {
+  <div class="loading">
+    <axl-spinner />
+    <p>Cargando...</p>
+  </div>
+  } @else if (error()) {
+  <div class="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+  } @else if (collection()) {
+  <mat-card class="collection-card">
+    <mat-card-content class="collection-info">
+      <div class="header-section">
+        <h2 class="title">{{ collection()!.titulo }}</h2>
+        <div class="metadata">
+          <div class="creation-date">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ collection()!.fecha_creacion | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="testimony-count">
+            <mat-icon>forum</mat-icon>
+            <span>{{ testimonies().length }} testimonios</span>
+          </div>
+        </div>
+      </div>
+      
+      <p class="description">{{ collection()!.descripcion }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="testimony-grid">
+    @for (testimony of testimonies(); track testimony.id) {
+    <app-testimony [testimony]="testimony" class="testimony-card" />
+    } @empty {
+    <p class="empty-message">No hay testimonios en esta colección.</p>
+    }
+  </div>
+  } @else {
+  <p class="not-found">Colección no encontrada.</p>
+  }
+</div>

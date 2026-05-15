@@ -1,0 +1,243 @@
+@use '@angular/material' as mat;
+
+:host {
+  --media-background: #f1f3f9;
+  --gradient-primary: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+  --mat-button-text-label-text-color: #fff;
+
+  :root.dark-mode & {
+    --media-background: #2a2e34;
+    --gradient-primary: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  }
+}
+
+.upload-container {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px var(--shadow-lg);
+  padding: 2.5rem;
+  max-width: 720px;
+  margin: 2rem auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  h2 {
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    letter-spacing: -0.5px;
+  }
+}
+
+::ng-deep mat-stepper {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+
+  .mat-stepper-horizontal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mat-horizontal-content-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1rem;
+  }
+
+  .mat-step-header {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+
+    .mat-step-label {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .mat-step-icon {
+      background: var(--color-primary);
+      color: var(--bg-card);
+    }
+
+    .mat-step-icon-selected {
+      background: var(--gradient-primary);
+    }
+  }
+}
+
+.step-form {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1rem;
+  min-height: calc(90vh - 120px);
+}
+
+.form-group {
+  position: relative;
+  width: 100%;
+
+  mat-form-field {
+    width: 100%;
+
+    .mat-form-field-outline {
+      background: var(--bg-card);
+      border-radius: 8px !important;
+    }
+
+    .mat-input-element {
+      color: var(--text-primary);
+      padding: 12px 0;
+    }
+
+    mat-label {
+      color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+    }
+  }
+}
+
+mat-chip-grid {
+  padding: 8px !important;
+  border-radius: 8px !important;
+  background: var(--bg-card);
+
+  .mat-chip-row {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+}
+
+.step-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 0;
+
+  button {
+    background: var(--gradient-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &[disabled] {
+      opacity: 0.7;
+      filter: grayscale(0.5);
+    }
+
+    &:not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    &.mat-button {
+      background: none;
+      border: 1px solid var(--color-primary);
+    }
+  }
+}
+
+.review-section {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px var(--shadow-lg);
+
+  h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .review-item {
+    margin-bottom: 0.75rem;
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    span {
+      color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+    }
+  }
+}
+
+.location mat-checkbox {
+  color: var(--text-primary);
+
+  .mat-checkbox-frame {
+    border-color: color-mix(in srgb, var(--text-primary) 30%, transparent);
+  }
+}
+
+.upload-wrapper {
+  .upload-state {
+    position: relative;
+
+    &.uploading {
+      opacity: 0.7;
+    }
+
+    .upload-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-card);
+      border-radius: var(--radius-md);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .upload-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  mat-stepper {
+    height: calc(90vh - 56px);
+  }
+
+  .step-form {
+    min-height: calc(90vh - 176px);
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-container {
+    padding: 1rem;
+  }
+
+  .step-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@include mat.stepper-overrides((
+  header-icon-foreground-color: var(--bg-card),
+  header-selected-state-icon-background-color: var(--color-primary),
+  header-selected-state-icon-foreground-color: var(--bg-card),
+  header-done-state-icon-background-color: var(--color-success),
+  header-done-state-icon-foreground-color: var(--bg-card),
+  container-color: var(--bg-secondary),
+  line-color: var(--color-primary),
+  header-label-text-color: var(--text-primary),
+  header-selected-state-label-text-color: var(--text-primary),
+  header-error-state-label-text-color: var(--color-danger),
+));

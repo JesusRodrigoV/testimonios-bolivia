@@ -1,0 +1,60 @@
+<div class="create-topic-container">
+  <div class="create-topic-card">
+    <h1 class="card-title">Crear Nuevo Tema</h1>
+    <form [formGroup]="topicForm" (ngSubmit)="onSubmit()" class="topic-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="titulo" placeholder="Escribe el título del tema" required>
+        @if (topicForm.get('titulo')?.hasError('required')) {
+          <mat-error>El título es requerido</mat-error>
+        }
+        @if (topicForm.get('titulo')?.hasError('maxlength')) {
+          <mat-error>El título no puede exceder 100 caracteres</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" placeholder="Describe tu tema..." rows="5" required></textarea>
+        @if (topicForm.get('descripcion')?.hasError('required')) {
+          <mat-error>La descripción es requerida</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Vincular Testimonio (Opcional)</mat-label>
+        <mat-select formControlName="id_testimonio">
+          <mat-option [value]="null">Ninguno</mat-option>
+          @for (testimonio of testimonios; track testimonio.id) {
+            <mat-option [value]="testimonio.id">{{ testimonio.title }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Vincular Evento Histórico (Opcional)</mat-label>
+        <mat-select formControlName="id_evento">
+          <mat-option [value]="null">Ninguno</mat-option>
+          @for (event of events; track event.id) {
+            <mat-option [value]="event.id">{{ event.name }} - {{ event.date | date:'yyyy' }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-button color="warn" type="button" [routerLink]="['/forum']">Cancelar</button>
+        <button mat-raised-button color="accent" type="submit" [disabled]="topicForm.invalid || isSubmitting">
+          @if (isSubmitting) { <mat-spinner diameter="20"></mat-spinner> }
+          @else { Crear Tema }
+        </button>
+      </div>
+    </form>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        <mat-icon>error</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </div>
+    }
+  </div>
+</div>

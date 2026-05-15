@@ -1,0 +1,82 @@
+<div class="feed-container">
+  <div class="feed-header">
+    <h2>Testimonios del Bicentenario</h2>
+    <button mat-icon-button class="sidebar-toggle-btn" (click)="toggleSidebar()" aria-label="Abrir filtros">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </div>
+  <div class="content-container">
+    @if (isSidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
+    }
+    <aside class="sidebar" [class.sidebar-open]="isSidebarOpen()">
+      <div class="sidebar-header">
+        <h3>Filtros</h3>
+        <button mat-icon-button class="sidebar-close-btn" (click)="toggleSidebar()" aria-label="Cerrar filtros">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="sidebar-filters">
+        <div class="filter-group">
+          <span class="filter-label">Eventos</span>
+          <app-events-filters [(selectedEvents)]="selectedEvents" (selectedEventsChange)="onFilterChange()"></app-events-filters>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Categorías</span>
+          <app-categories-filters [(selectedCategories)]="selectedCategories" (selectedCategoriesChange)="onFilterChange()"></app-categories-filters>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Etiquetas</span>
+          <app-tags-filters [(selectedTags)]="selectedTags" (selectedTagsChange)="onFilterChange()"></app-tags-filters>
+        </div>
+        @if (selectedCategories().length || selectedEvents().length || selectedTags().length) {
+        <button mat-raised-button color="accent" class="clear-filters" (click)="clearFilters()" aria-label="Limpiar todos los filtros">
+          <mat-icon>filter_alt_off</mat-icon>
+          Limpiar filtros
+        </button>
+        }
+      </div>
+    </aside>
+    <div class="testimony-feed">
+      @defer (when testimonies().length > 0 || !loading()) {
+      <div class="testimonies-wrapper">
+        @for (testimony of testimonies(); track testimony.id) {
+          @defer (on viewport) {
+            <app-testimony [testimony]="testimony"></app-testimony>
+          } @placeholder {
+            <div class="skeleton-card">
+              <div class="skeleton-header"></div>
+              <div class="skeleton-content"></div>
+              <div class="skeleton-footer"></div>
+            </div>
+          }
+        } @empty {
+        <div class="empty-state">
+          <mat-icon>info</mat-icon>
+          <p>No se encontraron testimonios</p>
+        </div>
+        }
+      </div>
+      } @placeholder (minimum 500ms) {
+      <div class="skeleton-container">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+      } @loading (minimum 1s; after 500ms) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando testimonios...</p>
+      </div>
+      } @error {
+      <div class="error">
+        <mat-icon>error</mat-icon>
+        <p>{{ error() || 'Error al cargar los testimonios. Por favor, intenta de nuevo.' }}</p>
+      </div>
+      }
+      @if (hasMore() && !loading() && !error()) {
+      <div id="loadMoreTrigger" style="height: 1px"></div>
+      }
+    </div>
+  </div>
+</div>

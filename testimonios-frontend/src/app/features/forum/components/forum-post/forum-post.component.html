@@ -1,0 +1,30 @@
+<div class="thread-post" (click)="goToPost(topicInfo().id_forotema)">
+  <div class="post-container">
+    <div class="avatar">
+      <img [ngSrc]="topicInfo().usuarios?.profile_image || '/assets/images/default-avatar.jpg'"
+        [alt]="topicInfo().usuarios?.nombre || 'Usuario'" width="40" height="40" />
+    </div>
+    <div class="post-content">
+      <div class="post-header">
+        <div class="post-title-row">
+          <span class="post-title">{{ topicInfo().titulo }}</span>
+          @if (topicInfo().usuarios?.nombre) {
+            <span class="post-author">por {{ topicInfo().usuarios!.nombre }}</span>
+          }
+        </div>
+        <span class="post-timestamp">{{ topicInfo().fecha_creacion | date: 'short' }}</span>
+      </div>
+      <div class="post-body">
+        <p>{{ topicInfo().descripcion }}</p>
+      </div>
+      <div class="post-footer">
+        @if (topicInfo()._count?.foro_comentarios !== undefined) {
+          <span class="comment-count">
+            <mat-icon>comment</mat-icon>
+            {{ topicInfo()._count!.foro_comentarios }}
+          </span>
+        }
+      </div>
+    </div>
+  </div>
+</div>

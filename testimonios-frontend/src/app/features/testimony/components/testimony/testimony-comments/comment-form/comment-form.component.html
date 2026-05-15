@@ -1,0 +1,53 @@
+<form
+  class="{{ formType() === 'edit' ? 'comment-form' : formType() }}-form"
+  (ngSubmit)="submit()"
+>
+  <div class="form-header">
+    <img
+      [src]="authStore.user()?.profile_image || '/assets/images/default-avatar.jpg'"
+      alt="Tu avatar"
+      class="form-avatar"
+      width="32"
+      height="32"
+    />
+    <span class="form-username">{{ authStore.user()?.nombre || 'Usuario' }}</span>
+  </div>
+  <div class="input-container">
+    <textarea
+      [id]="formType() + '-' + (parentId || commentId || 'new')"
+      name="content"
+      [(ngModel)]="content"
+      required
+      minlength="2"
+      maxlength="1000"
+      rows="3"
+      [placeholder]="formType() === 'edit' ? 'Editar comentario' : (formType() === 'comment' ? 'Escribe un comentario...' : 'Escribe una respuesta...')"
+    ></textarea>
+    @if (formErrors['content']) {
+    <div class="error-message">
+      Mínimo 2 caracteres
+    </div>
+    }
+    <div class="char-count">{{ content.length }}/1000</div>
+  </div>
+  <div class="form-buttons">
+    @if (formType() === 'edit') {
+      <button mat-button type="button" class="btn-cancel" (click)="cancel()">
+        Cancelar
+      </button>
+    }
+    @if (formType() === 'reply') {
+      <button mat-button type="button" class="btn-cancel" (click)="cancel()">
+        Cancelar
+      </button>
+    }
+    <button
+      mat-flat-button
+      type="submit"
+      class="btn-comment"
+      [disabled]="!content || content.length < 2"
+    >
+      {{ formType() === 'edit' ? 'Guardar' : (formType() === 'comment' ? 'Comentar' : 'Responder') }}
+    </button>
+  </div>
+</form>

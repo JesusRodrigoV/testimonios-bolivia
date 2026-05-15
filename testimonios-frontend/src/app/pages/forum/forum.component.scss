@@ -1,0 +1,127 @@
+@use '@angular/material' as mat;
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+}
+
+.forum-posts {
+  max-width: 800px;
+  margin: auto;
+  margin-top: 1.25rem;
+  padding: 16px 0 0 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-card);
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  border: 1px solid var(--border-color);
+  transition: background 0.3s ease;
+}
+
+.post-placeholder {
+  height: 150px;
+  width: 100%;
+  max-width: 600px; 
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 0%,
+    rgba(0, 0, 0, 0.05) 50%,
+    var(--bg-card) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fade-in 0.5s ease-out;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
+}
+
+.fab-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .forum-posts {
+    margin: 16px auto;
+    padding: 0 8px;
+  }
+
+  .post-placeholder {
+    height: 120px;
+  }
+
+  .empty-state {
+    padding: 16px;
+    
+    p {
+      font-size: 0.9rem;
+    }
+
+    button {
+      font-size: 0.85rem;
+    }
+  }
+
+  .fab-button {
+    bottom: 16px;
+    right: 16px;
+  }
+}

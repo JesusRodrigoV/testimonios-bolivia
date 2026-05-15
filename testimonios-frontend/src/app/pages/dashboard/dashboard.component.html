@@ -1,0 +1,16 @@
+<div class="dashboard-container">
+  <mat-tab-group mat-align-tabs="start" [selectedIndex]="selectedTab()">
+    <mat-tab label="Gestión de Usuarios">
+      <app-user-management />
+    </mat-tab>
+    <mat-tab label="Gestión de Testimonios">
+      <app-testimony-management />
+    </mat-tab>
+    <mat-tab label="Gestión de Comentarios">
+      <app-comment-management />
+    </mat-tab>
+    <mat-tab label="Gestión de Eventos">
+      <app-event-management />
+    </mat-tab>
+  </mat-tab-group>
+</div>

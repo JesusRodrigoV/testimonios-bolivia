@@ -1,0 +1,41 @@
+:root {
+  --header-height: 64px;
+  --footer-height: 80px;
+  --sidenav-width: 240px;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.app-header {
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+mat-drawer-container {
+  flex: 1;
+  width: 100%;
+}
+
+mat-drawer {
+  width: var(--sidenav-width);
+}
+
+@media (max-width: 600px) {
+  mat-drawer {
+    width: 200px;
+  }
+}

@@ -1,0 +1,68 @@
+<div class="management-container">
+  <div class="header">
+    <h1>Gestión de Usuarios</h1>
+    <button mat-button (click)="openUserDialog()">
+      <i class="bx bx-plus"></i>
+      Nuevo Usuario
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.id_usuario) {
+          <tr>
+            <td class="text-muted">#{{ user.id_usuario }}</td>
+            <td>
+              <img
+                height="50"
+                width="50"
+                [ngSrc]="
+                  user.profile_image || 'assets/images/default-avatar.jpg'
+                "
+                [alt]="user.nombre"
+                class="profile-image"
+              />
+            </td>
+            <td>{{ user.nombre }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span [ngClass]="'role-badge role-' + user.role">
+                {{ getRoleName(user.role || 4) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="btn-icon edit" (click)="openUserDialog(user)">
+                  <i class="bx bx-edit"></i>
+                </button>
+                <button
+                  class="btn-icon delete"
+                  (click)="deleteUser(user.id_usuario)"
+                >
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (isLoading) {
+      <div class="loading-overlay">
+        <axl-spinner/>
+      </div>
+    }
+  </div>
+</div>

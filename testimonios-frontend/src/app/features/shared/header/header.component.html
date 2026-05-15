@@ -1,0 +1,190 @@
+<header class="header">
+  <div class="header-left">
+    <ng-content select="[sidenav-button]" />
+    <h1 class="app-title">
+      <div class="logo-container">
+        <a routerLink="/home">
+          <img
+            ngSrc="assets/images/logo-Sfondo.png"
+            alt="Legado Bolivia Logo"
+            width="70"
+            height="70"
+            priority
+            class="logo"
+          />
+        </a>
+      </div>
+    </h1>
+  </div>
+
+  <app-search-bar [isMobile]="false" class="desktop-search"></app-search-bar>
+
+  <div class="mobile-search-container">
+    @if (!isMobileSearchActive()) {
+    <button
+      mat-icon-button
+      class="mobile-search-toggle"
+      (click)="onToggleMobileSearch(true)"
+      matTooltip="Buscar"
+      golden
+    >
+      <i class="bx bx-search"></i>
+    </button>
+    }
+
+    <app-search-bar
+      [isMobile]="true"
+      [isActive]="isMobileSearchActive()"
+      (toggleMobile)="onToggleMobileSearch($event)"
+      class="mobile-search"
+    ></app-search-bar>
+  </div>
+
+  <div class="header-right">
+    <button
+      mat-flat-button
+      class="create-post-btn"
+      routerLink="/submit-testimony"
+      matTooltip="Crear nuevo testimonio"
+      matTooltipPosition="below"
+    >
+      <i class="bx bx-plus"></i>
+    </button>
+
+    <div class="options-container" [matMenuTriggerFor]="optionsMenu" golden>
+      <button mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+
+    @if (!authStore.isAuthenticated()) {
+    <button
+      mat-flat-button
+      routerLink="/login"
+      class="login-btn"
+      matTooltip="Iniciar sesión"
+      matTooltipPosition="below"
+      golden
+    >
+      Iniciar Sesión
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/register"
+      matTooltip="Registrarse"
+      matTooltipPosition="below"
+    >
+      Registrarse
+    </button>
+    } @else {
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="notificationsMenu"
+      [matBadge]="unreadNotifications()"
+      [matBadgeHidden]="unreadNotifications() === 0"
+      matBadgeColor="warn"
+      class="notification-btn"
+      matTooltip="Notificaciones"
+      matTooltipPosition="below"
+      golden
+    >
+      <i class="bx bx-bell"></i>
+    </button>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="userMenu"
+      class="avatar-button"
+      matTooltip="Menú de usuario"
+      matTooltipPosition="below"
+      golden
+    >
+      <i class="bx bxs-user-circle"></i>
+    </button>
+    }
+  </div>
+
+  <mat-menu #notificationsMenu="matMenu" class="notifications-menu">
+    <div class="notifications-container">
+      <div class="notifications-header">
+        <h3>Notificaciones</h3>
+        @if (unreadNotifications() > 0) {
+          <button class="mark-all-read" (click)="markAllAsRead(); $event.stopPropagation()">
+            Marcar todas
+          </button>
+        }
+      </div>
+      @if (isLoading()) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando notificaciones...</p>
+      </div>
+      } @else if (error()) {
+      <div class="error">
+        <mat-icon>error_outline</mat-icon>
+        <p>Error al obtener las notificaciones</p>
+      </div>
+      } @else { @for ( notification of unreadList(); track
+      notification.id_notificacion ) {
+      <div
+        class="notification-item"
+        (click)="onNotificationClick(notification)"
+        (keydown)="onNotificationKeydown($event, notification)"
+        role="button"
+        tabindex="0"
+      >
+        <div class="notification-content">
+          <p class="message">{{ notification.mensaje }}</p>
+          <p class="details">
+            @if (notification.testimonios) {
+              Testimonio: {{ notification.testimonios.titulo }} •
+            }
+            @if (notification.forotema) {
+              Foro: {{ notification.forotema.titulo }} •
+            }
+            {{ notification.fecha_creacion | date : "short" }}
+          </p>
+        </div>
+        <mat-icon class="status-icon">
+          {{ notification.leido ? "check_circle" : "circle" }}
+        </mat-icon>
+      </div>
+      } @empty {
+      <div class="empty">
+        <mat-icon>notifications_none</mat-icon>
+        <p>No hay notificaciones</p>
+      </div>
+      } }
+    </div>
+  </mat-menu>
+
+  <mat-menu #optionsMenu="matMenu" class="options-menu">
+    <button mat-menu-item (click)="toggleTheme()">Cambiar Tema</button>
+  </mat-menu>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item routerLink="/profile" golden>
+      <i class="bx bx-user"></i>
+      Mi Perfil
+    </button>
+    <button mat-menu-item routerLink="/my-testimonies" golden>
+      <i class="bx bx-archive"></i>
+      Mis testimonios
+    </button>
+    @if (isAdmin()) {
+    <button mat-menu-item routerLink="/dashboard" golden>
+      <i class="bx bxs-dashboard"></i>
+      Dashboard
+    </button>
+    }
+    <button mat-menu-item routerLink="/settings" golden>
+      <i class="bx bx-cog"></i>
+      Configuración
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="onLogout()" golden>
+      <i class="bx bx-log-out"></i>
+      Cerrar Sesión
+    </button>
+  </mat-menu>
+</header>

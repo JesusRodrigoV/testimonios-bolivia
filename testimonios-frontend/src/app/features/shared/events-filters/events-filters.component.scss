@@ -1,0 +1,15 @@
+.mat-mdc-chip-set-horizontal {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mat-mdc-chip-set-horizontal::-webkit-scrollbar {
+  height: 8px;
+}
+
+.mat-mdc-chip-set-horizontal::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}

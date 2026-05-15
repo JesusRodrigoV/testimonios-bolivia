@@ -1,0 +1,116 @@
+<div class="comment" [ngClass]="{ reply: isReply }">
+  <div class="comment-header">
+    <div class="avatar-container">
+      <img [ngSrc]="comentario().usuarios.profile_image || '/assets/images/default-avatar.jpg'"
+        alt="Avatar de {{ comentario().usuarios.nombre }}" class="avatar" width="40" height="40" />
+    </div>
+    <div class="user-info">
+      <span class="username" [ngClass]="getRoleClass(comentario().usuarios.rol.nombre)">
+        {{ comentario().usuarios.nombre }}
+      </span>
+      @if (comentario().usuarios.rol.nombre !== 'visitante') {
+        <span class="role" [ngClass]="getRoleClass(comentario().usuarios.rol.nombre)">
+          {{ comentario().usuarios.rol.nombre | titlecase }}
+        </span>
+      }
+    </div>
+    <span class="comment-date">{{ comentario().fecha_creacion | date: 'short' }}</span>
+  </div>
+
+  @if (isEditing()) {
+    <div class="edit-form-wrapper">
+      <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()" class="comment-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Editar comentario</mat-label>
+          <textarea matInput formControlName="contenido" rows="3" required></textarea>
+          @if (editForm.get('contenido')?.value?.length > 0) {
+            <mat-hint align="end">{{ editForm.get('contenido')?.value?.length || 0 }}/500</mat-hint>
+          }
+        </mat-form-field>
+        <div class="form-actions">
+          <button mat-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
+          <button mat-raised-button color="accent" type="submit" [disabled]="editForm.invalid || isSubmittingEdit()">
+            @if (isSubmittingEdit()) {
+              <axl-spinner size="small" /> Guardando...
+            } @else {
+              Guardar
+            }
+          </button>
+        </div>
+      </form>
+      @if (editError()) {
+        <div class="error-message">
+          <mat-icon>error</mat-icon>
+          <p>{{ editError() }}</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="comment-content">{{ comentario().contenido }}</p>
+
+    <div class="comment-actions">
+      <button mat-button (click)="startReply()" matTooltip="Responder">
+        <mat-icon>reply</mat-icon> Responder
+      </button>
+      @if (currentUserId === comentario().creado_por_id_usuario) {
+        <button mat-button (click)="startEdit()" matTooltip="Editar">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+      }
+      @if (currentUserId === comentario().creado_por_id_usuario || currentUserRole === 1) {
+        <button mat-button color="warn" (click)="onDelete()" [disabled]="isDeleting()" matTooltip="Eliminar">
+          <mat-icon>delete</mat-icon> Eliminar
+        </button>
+      }
+    </div>
+  }
+
+  @if (replyingTo() === comentario().id_forocoment) {
+    <div class="reply-form-wrapper">
+      <form [formGroup]="replyForm" (ngSubmit)="onSubmitReply()" class="comment-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Responder</mat-label>
+          <textarea matInput formControlName="contenido"
+            placeholder="Escribe tu respuesta..." rows="3" required></textarea>
+          @if (replyForm.get('contenido')?.value?.length > 0) {
+            <mat-hint align="end">{{ replyForm.get('contenido')?.value?.length || 0 }}/500</mat-hint>
+          }
+        </mat-form-field>
+        <div class="form-actions">
+          <button mat-button color="warn" type="button" (click)="cancelReply()">Cancelar</button>
+          <button mat-raised-button color="accent" type="submit"
+            [disabled]="replyForm.invalid || isSubmittingReply()">
+            @if (isSubmittingReply()) {
+              <axl-spinner size="small" /> Enviando...
+            } @else {
+              Responder
+            }
+          </button>
+        </div>
+      </form>
+      @if (replyError()) {
+        <div class="error-message">
+          <mat-icon>error</mat-icon>
+          <p>{{ replyError() }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (comentario().children.length > 0) {
+    <div class="replies">
+      <p class="replies-label">Respuestas</p>
+      @for (child of comentario().children; track child.id_forocoment) {
+        <div class="reply-wrapper">
+          <app-forum-comment
+            [comentario]="child"
+            [isReply]="true"
+            [topicId]="topicId()"
+            (replySubmitted)="replySubmitted.emit($event)"
+            (commentDeleted)="commentDeleted.emit($event)"
+          />
+        </div>
+      }
+    </div>
+  }
+</div>

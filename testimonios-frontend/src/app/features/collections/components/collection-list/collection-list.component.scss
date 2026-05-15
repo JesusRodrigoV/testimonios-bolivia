@@ -1,0 +1,154 @@
+.collections-page {
+  padding: 50px;
+  color: var(--text-primary);
+  min-height: calc(100vh - 64px); 
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.collection-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow-md);
+    background: var(--bg-secondary);
+  }
+
+  .collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    button {
+      color: var(--text-secondary);
+    }
+  }
+
+  .description {
+    font-size: 1rem;
+    color: var(--text-primary);
+    opacity: 0.85;
+    margin: 0 0 16px;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-md);
+}
+
+.error mat-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-danger);
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .collections-page {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .collection-card {
+    padding: 16px;
+
+    .collection-header h3 {
+      font-size: 1.4rem;
+    }
+
+    .description {
+      font-size: 0.95rem;
+    }
+
+    .meta {
+      font-size: 0.8rem;
+    }
+  }
+}

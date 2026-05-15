@@ -1,0 +1,83 @@
+<div class="collections-page">
+  <div class="header">
+    <h2>Mis Colecciones</h2>
+    <button mat-flat-button color="primary" (click)="openCollectionForm()" [disabled]="!isAuthenticated()">
+      Crear Colección
+    </button>
+  </div>
+  @if (loading()) {
+    <div class="loading">
+      <axl-spinner />
+      <p>Cargando colecciones...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error">
+      <mat-icon>error</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else {
+    <div class="collections-grid">
+      @for (collection of collections(); track collection.id_coleccion) {
+        <div class="collection-card" (click)="navigateToCollection(collection.id_coleccion)">
+          <div class="collection-header">
+            <h3>{{ collection.titulo }}</h3>
+            @if(collection.titulo !== "Favoritos" && collection.titulo !== "Guardados"){
+            <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()" aria-label="Opciones de la colección">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          }
+            <mat-menu #menu="matMenu">
+              @if (!isProtectedCollection(collection)) {
+                <button mat-menu-item (click)="openCollectionForm(collection); $event.stopPropagation()">
+                  Editar
+                </button>
+                <button mat-menu-item (click)="deleteCollection(collection.id_coleccion); $event.stopPropagation()">
+                  Eliminar
+                </button>
+              }
+            </mat-menu>
+          </div>
+          <p class="description">{{ collection.descripcion }}</p>
+          <div class="meta">
+            <span>Creada: {{ collection.fecha_creacion | date: 'mediumDate' }}</span>
+          </div>
+        </div>
+      }
+      @empty {
+        <p>No hay colecciones. ¡Crea una!</p>
+      }
+    </div>
+  }
+</div>
+
+<ng-template #formTemplate let-collection="collection">
+  <h2 mat-dialog-title>{{ collection ? 'Editar Colección' : 'Crear Colección' }}</h2>
+  <mat-dialog-content>
+    <form [formGroup]="collectionForm">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="titulo" required />
+        @if (collectionForm.get('titulo')?.hasError('required')) {
+        <mat-error>
+          Título es requerido
+        </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="4"></textarea>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="closeCollectionForm()">Cancelar</button>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="collectionForm.invalid || saving()"
+      (click)="saveCollection()"
+    >
+      {{ saving() ? 'Guardando...' : (collection ? 'Actualizar' : 'Crear') }}
+    </button>
+  </mat-dialog-actions>
+</ng-template>

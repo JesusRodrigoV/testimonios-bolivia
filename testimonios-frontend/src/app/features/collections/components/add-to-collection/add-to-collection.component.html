@@ -1,0 +1,67 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Guardar en...</h2>
+    <button mat-icon-button (click)="toggleCreateForm()" matTooltip="Crear nueva colección">
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    @if (loading()) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando colecciones...</p>
+      </div>
+    } @else if (error()) {
+      <div class="error">
+        <mat-icon>error</mat-icon>
+        <p>{{ error() }}</p>
+      </div>
+    } @else if (showCreateForm()) {
+      <form [formGroup]="collectionForm" class="create-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="titulo" required>
+          @if (collectionForm.get('titulo')?.hasError('required')) {
+          <mat-error>
+            El título es requerido
+          </mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="descripcion" rows="4"></textarea>
+        </mat-form-field>
+      </form>
+    } @else {
+      <div class="collections-list">
+        @for (collection of collections(); track collection.id_coleccion) {
+          <div class="collection-item">
+            <mat-checkbox
+              [checked]="selectedCollectionIds().includes(collection.id_coleccion)"
+              (change)="toggleCollection(collection.id_coleccion)"
+            >
+              {{ collection.titulo }}
+            </mat-checkbox>
+          </div>
+        }
+        @if (collections().length === 0) {
+          <p>No tienes colecciones. Crea una nueva.</p>
+        }
+      </div>
+    
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="addToCollection()"
+      [disabled]="(showCreateForm() && collectionForm.invalid) || loading()"
+    >
+      Guardar
+    </button>
+  </mat-dialog-actions>
+</div>

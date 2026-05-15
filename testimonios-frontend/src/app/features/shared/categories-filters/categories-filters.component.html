@@ -1,0 +1,16 @@
+<mat-chip-listbox
+  class="mat-mdc-chip-set-horizontal"
+  aria-label="Filtrar por categorías"
+  multiple
+  (change)="onSelectionChange($event)"
+>
+  @for (categoria of categorias; track categoria.id_categoria) {
+    <mat-chip-option
+      [selectable]="true"
+      [selected]="selectedCategories().includes(categoria.id_categoria)"
+      (selectionChange)="toggleCategory(categoria.id_categoria)"
+    >
+      {{ categoria.nombre }}
+    </mat-chip-option>
+  }
+</mat-chip-listbox>

@@ -1,0 +1,48 @@
+<div class="edit-topic-container">
+  <div class="edit-topic-card">
+    <h1 class="card-title">Editar Tema</h1>
+
+    @if (isLoading) {
+      <div class="loading">
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Cargando tema...</p>
+      </div>
+    } @else {
+      <form [formGroup]="topicForm" (ngSubmit)="onSubmit()" class="topic-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="titulo" placeholder="Escribe el título del tema" required>
+          @if (topicForm.get('titulo')?.hasError('required')) {
+            <mat-error>El título es requerido</mat-error>
+          }
+          @if (topicForm.get('titulo')?.hasError('maxlength')) {
+            <mat-error>El título no puede exceder 100 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="descripcion" placeholder="Describe tu tema..." rows="5" required></textarea>
+          @if (topicForm.get('descripcion')?.hasError('required')) {
+            <mat-error>La descripción es requerida</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button color="warn" type="button" [routerLink]="['/forum/post', topicId]">Cancelar</button>
+          <button mat-raised-button color="accent" type="submit" [disabled]="topicForm.invalid || isSubmitting">
+            @if (isSubmitting) { <mat-spinner diameter="20"></mat-spinner> }
+            @else { Guardar Cambios }
+          </button>
+        </div>
+      </form>
+
+      @if (errorMessage) {
+        <div class="error-message">
+          <mat-icon>error</mat-icon>
+          <p>{{ errorMessage }}</p>
+        </div>
+      }
+    }
+  </div>
+</div>

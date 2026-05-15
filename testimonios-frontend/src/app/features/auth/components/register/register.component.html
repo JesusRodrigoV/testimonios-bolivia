@@ -1,0 +1,11 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <app-register-header></app-register-header>
+    <app-register-form
+      [buttonText]="'Crear cuenta'"
+      [loading]="loading()"
+      [error]="error()"
+      (onSubmit)="onSubmit($event)"
+    ></app-register-form>
+  </mat-card>
+</div>

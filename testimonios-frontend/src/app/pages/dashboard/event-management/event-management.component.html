@@ -1,0 +1,53 @@
+<div class="management-container">
+  <div class="header">
+    <h1>Gestión de Eventos Históricos</h1>
+    <button mat-button (click)="openEventDialog()">
+      <mat-icon>add</mat-icon>
+      Nuevo Evento
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (event of events; track event.id_evento) {
+          <tr>
+            <td class="text-muted">#{{ event.id_evento }}</td>
+            <td>{{ event.nombre }}</td>
+            <td class="desc-cell">{{ event.descripcion }}</td>
+            <td>{{ event.fecha | date : "dd/MM/yyyy" }}</td>
+            <td>
+              <div class="actions">
+                <button mat-icon-button (click)="openEventDialog(event)" matTooltip="Editar evento">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="deleteEvent(event.id_evento!)"
+                  matTooltip="Eliminar evento"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (isLoading) {
+      <div class="loading-overlay">
+        <axl-spinner/>
+      </div>
+    }
+  </div>
+</div>

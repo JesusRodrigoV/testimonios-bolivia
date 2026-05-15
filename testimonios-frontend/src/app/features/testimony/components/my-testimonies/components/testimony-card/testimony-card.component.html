@@ -1,0 +1,41 @@
+<div class="testimony-card">
+  <div class="card-header">
+    <div class="header-text">
+      <h3>{{ testimony().title }}</h3>
+      <span class="date">{{ testimony().createdAt | date : "medium" }}</span>
+    </div>
+    <span class="status-badge" [class]="'status-' + testimony().status">
+      {{ testimony().status }}
+    </span>
+  </div>
+
+  <div class="card-body">
+    <p class="description">{{ testimony().description }}</p>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <mat-icon>person</mat-icon>
+      <span>{{ testimony().author }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>category</mat-icon>
+      <span>{{ testimony().categories.join(", ") || "Sin categoría" }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>label</mat-icon>
+      <span>{{ testimony().tags.join(", ") || "Sin etiquetas" }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>flag</mat-icon>
+      <span>{{ testimony().format }}</span>
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <button mat-stroked-button (click)="onEdit()">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+  </div>
+</div>

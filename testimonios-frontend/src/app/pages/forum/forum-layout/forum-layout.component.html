@@ -1,0 +1,20 @@
+<div class="app-container">
+  <header class="app-header">
+    <app-header>
+      <button sidenav-button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </app-header>
+  </header>
+
+  <main class="app-main">
+    <mat-drawer-container>
+      <mat-drawer #drawer>
+        <app-sidenav />
+      </mat-drawer>
+      <mat-drawer-content>
+        <router-outlet /> 
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </main>
+</div>

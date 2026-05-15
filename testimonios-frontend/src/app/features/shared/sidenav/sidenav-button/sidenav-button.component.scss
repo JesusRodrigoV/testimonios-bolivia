@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.sidenav-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 12px;
+  height: 44px;
+  border-radius: 8px;
+  gap: 12px;
+  justify-content: flex-start;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background 0.2s ease,
+    border-radius 0.2s ease;
+
+  &.expanded {
+    padding: 0 16px;
+  }
+
+  .sidenav-icon {
+    flex-shrink: 0;
+    color: var(--mat-sys-on-surface-variant);
+    transition: color 0.2s ease;
+  }
+
+  .sidenav-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition:
+      color 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  &:hover {
+    background: var(--mat-sys-surface-container-high);
+
+    .sidenav-icon,
+    .sidenav-label {
+      color: var(--mat-sys-on-surface);
+    }
+  }
+
+  &.active {
+    background: var(--mat-sys-secondary-container);
+    border-radius: 8px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 24px;
+      border-radius: 0 3px 3px 0;
+      background: var(--mat-sys-primary);
+    }
+
+    .sidenav-icon {
+      color: var(--mat-sys-primary);
+    }
+
+    .sidenav-label {
+      color: var(--mat-sys-on-secondary-container);
+      font-weight: 600;
+    }
+  }
+}

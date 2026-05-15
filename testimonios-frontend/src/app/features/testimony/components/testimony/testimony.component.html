@@ -1,0 +1,58 @@
+<!--<div class="testimony-card" (click)="openModal()">-->
+<div class="testimony-card" (click)="navigateToTestimony()" (keydown)="onKeydown($event)" role="button" tabindex="0" [attr.aria-label]="'Ver testimonio: ' + testimony().title">
+  <div class="header">
+    <h3>{{ testimony().title }}</h3>
+    <p class="description">{{ testimony().description }}</p>
+  </div>
+  <div class="media" (click)="$event.stopPropagation()">
+    @defer (on viewport) {
+      @if (testimony().format === MediaFormat.Video) {
+        <app-video-player class="media-content" [videoUrl]="testimony().url" />
+      } @else if (testimony().format === MediaFormat.Audio) {
+        <audio
+          #audioPlayer
+          [src]="testimony().url"
+          controls
+          loading="lazy"
+          class="media-content"
+        ></audio>
+      }
+    } @placeholder (minimum 500ms) {
+      <div class="skeleton-media"></div>
+    } @loading (minimum 1s; after 500ms) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando medio...</p>
+      </div>
+    } @error {
+      <div class="error">
+        <mat-icon>error</mat-icon>
+        <p>Error al cargar el medio.</p>
+      </div>
+    }
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item">
+      <mat-icon>person</mat-icon>
+      <span>{{ testimony().author }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>calendar_today</mat-icon>
+      <span>{{ testimony().createdAt | date: "medium" }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>category</mat-icon>
+      <span>{{ testimony().categories.join(", ") || "Ninguna" }}</span>
+    </div>
+    <div class="meta-item">
+      <mat-icon>label</mat-icon>
+      <span>{{ testimony().tags.join(", ") || "Ninguna" }}</span>
+    </div>
+    @if (testimony().event) {
+    <div class="meta-item">
+      <mat-icon>event</mat-icon>
+      <span>{{ testimony().event }}</span>
+    </div>
+    }
+  </div>
+</div>

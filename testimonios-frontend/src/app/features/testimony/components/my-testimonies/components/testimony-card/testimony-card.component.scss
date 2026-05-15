@@ -1,0 +1,171 @@
+:host {
+  --status-pendiente: #f59e0b;
+  --status-aprobado: #10b981;
+  --status-rechazado: #ef4444;
+  --status-archivado: #6b7280;
+  --status-borrador: #9ca3af;
+
+  :root.dark-mode & {
+    --status-pendiente: #fbbf24;
+    --status-aprobado: #34d399;
+    --status-rechazado: #f87171;
+    --status-archivado: #9ca3af;
+    --status-borrador: #d1d5db;
+  }
+}
+
+.testimony-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px var(--shadow-md);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.header-text h3 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.date {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #fff;
+
+  &.status-pendiente { background: var(--status-pendiente); }
+  &.status-aprobado { background: var(--status-aprobado); }
+  &.status-rechazado { background: var(--status-rechazado); }
+  &.status-archivado { background: var(--status-archivado); }
+  &.status-borrador { background: var(--status-borrador); }
+}
+
+.card-body {
+  padding: 0;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.meta-item mat-icon {
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.meta-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-color);
+}
+
+.card-actions button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-actions button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 600px) {
+  .testimony-card {
+    padding: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .header-text h3 {
+    font-size: 1.15rem;
+  }
+
+  .meta-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .card-actions {
+    justify-content: stretch;
+  }
+
+  .card-actions button {
+    flex: 1;
+    justify-content: center;
+  }
+}

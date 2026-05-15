@@ -1,0 +1,27 @@
+<div class="testimonies-page">
+  <div class="page-header">
+    <h2>Mis Testimonios</h2>
+    <button mat-raised-button color="primary" routerLink="/submit-testimony">
+      <mat-icon>add</mat-icon>
+      Nuevo testimonio
+    </button>
+  </div>
+
+  <div class="testimonies-grid">
+    @for (testimony of testimonies(); track testimony.id) {
+      <app-testimony-card
+        [testimony]="testimony"
+        (edit)="editTestimony($event)"
+        (delete)="deleteTestimony($event)"
+      />
+    } @empty {
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>No tenés testimonios todavía.</p>
+        <button mat-raised-button color="primary" routerLink="/submit-testimony">
+          Crear tu primer testimonio
+        </button>
+      </div>
+    }
+  </div>
+</div>

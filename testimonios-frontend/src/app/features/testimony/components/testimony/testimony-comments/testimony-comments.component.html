@@ -1,0 +1,32 @@
+<div class="comments-section">
+  <div class="comments-header">
+    <h3>Comentarios ({{ totalComments }})</h3>
+    <button mat-button class="sort-toggle" (click)="toggleSort()">
+      <mat-icon>swap_vert</mat-icon>
+      {{ sortOrder === 'newest' ? 'Más recientes' : 'Más antiguos' }}
+    </button>
+  </div>
+  <app-comment-form
+    [formType]="'comment'"
+    [testimonyId]="testimonyId()"
+    (commentSubmitted)="onNewComment($event)"
+  ></app-comment-form>
+  <app-comment-list
+    [comments]="comments"
+    [isLoading]="isLoading"
+    [testimonyId]="testimonyId()"
+    (commentsUpdated)="onCommentsUpdated()"
+  ></app-comment-list>
+  @if (hasMorePages && !isLoading && !isLoadingMore) {
+  <div class="load-more">
+    <button mat-button color="primary" (click)="loadMore()">
+      Cargar más comentarios
+    </button>
+  </div>
+  }
+  @if (isLoadingMore) {
+  <div class="loading-more">
+    <p>Cargando más comentarios...</p>
+  </div>
+  }
+</div>

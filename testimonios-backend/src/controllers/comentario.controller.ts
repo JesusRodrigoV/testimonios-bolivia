@@ -1,0 +1,233 @@
+import type { Request, Response } from "express";
+import { parse, ValiError } from "valibot";
+import { NotificacionModel } from "../models/notificacion.model";
+import { Rol } from "@app/middleware/authorization";
+import { ComentarioService } from "@app/services/comentario.service";
+import { createComentarioSchema, updateComentarioSchema } from "../models/comentario.model";
+
+export class ComentarioController {
+  static async getAll(req: Request, res: Response) {
+    try {
+      if (req.user?.id_rol === Rol.ADMIN) {
+        const comentarios = await ComentarioService.findAll(req);
+        return res.json(comentarios);
+      }
+
+      const comentarios = await ComentarioService.findApproved(req);
+      res.json(comentarios);
+    } catch (error) {
+      return res.status(500).json({ error: "Error al obtener los comentarios" });
+    }
+  }
+
+  static async getPendingComments(req: Request, res: Response) {
+    try {
+      if (req.user?.id_rol !== Rol.ADMIN) {
+        // solo el admin puede ver los comentarios pendientes
+        return res
+          .status(403)
+          .json({ error: "No tiene permiso para ver comentarios pendientes" });
+      }
+
+      const comentarios = await ComentarioService.findPending();
+      res.json(comentarios);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Error al obtener los comentarios pendientes" });
+    }
+  }
+
+  static async getByTestimonioId(req: Request, res: Response) {
+    try {
+      const { id_testimonio } = req.params;
+
+      if (!id_testimonio) {
+        return res.status(400).json({ error: "ID de testimonio requerido" });
+      }
+
+      const comentarios = await ComentarioService.findByTestimonioId(
+        parseInt(id_testimonio),
+        req
+      );
+      res.json(comentarios);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: "Error al obtener los comentarios del testimonio" });
+    }
+  }
+
+  static async getById(req: Request, res: Response) {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+      const id = parseInt(req.params.id);
+      const comentario = await ComentarioService.findById(id);
+
+      if (!comentario) {
+        return res.status(404).json({ error: "Comentario no encontrado" });
+      }
+
+      if (req.user?.id_rol !== Rol.ADMIN && comentario.id_estado !== 2) {
+        // comentarios no aprobados no se ven
+        return res
+          .status(403)
+          .json({ error: "No tiene permiso para ver este comentario" });
+      }
+
+      res.json(comentario);
+    } catch (error) {
+      return res.status(500).json({ error: "Error al obtener el comentario" });
+    }
+  }
+
+  static async create(req: Request, res: Response) {
+    try {
+      const body = parse(createComentarioSchema, req.body);
+
+      const comentario = await ComentarioService.create({
+        contenido: body.contenido,
+        id_estado: 1,
+        fecha_creacion: new Date(),
+        creado_por_id_usuario: req.user!.id_usuario,
+        id_testimonio: body.id_testimonio,
+        parent_id: body.parent_id,
+      });
+
+      // Notificar a los administradores sobre el nuevo comentario
+      await NotificacionModel.notificarNuevoComentario(
+        body.id_testimonio
+      );
+
+      res.status(201).json(comentario);
+    } catch (error) {
+      return res.status(500).json({ error: "Error al crear el comentario" });
+    }
+  }
+
+  static async update(req: Request, res: Response) {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+
+      const id = parseInt(req.params.id);
+      const comentario = await ComentarioService.findById(id);
+
+      if (!comentario) {
+        return res.status(404).json({ error: "Comentario no encontrado" });
+      }
+
+      if (req.user?.id_rol === Rol.ADMIN) {
+        const { contenido, id_estado } = parse(updateComentarioSchema, req.body);
+        const comentarioActualizado = await ComentarioService.update(id, {
+          contenido,
+          id_estado,
+        });
+
+        // Notificar al usuario sobre el cambio de estado de su comentario
+        if (id_estado && id_estado !== comentario.id_estado) {
+          await NotificacionModel.notificarCambioEstadoComentario(
+            comentario.id_testimonio,
+            comentario.creado_por_id_usuario,
+            id_estado
+          );
+        }
+
+        return res.json(comentarioActualizado);
+      }
+
+      if (comentario.creado_por_id_usuario !== req.user!.id_usuario) {
+        return res
+          .status(403)
+          .json({ error: "No tiene permiso para modificar este comentario" });
+      }
+
+      const { contenido } = parse(updateComentarioSchema, req.body);
+      const comentarioActualizado = await ComentarioService.update(id, {
+        contenido,
+      });
+      res.json(comentarioActualizado);
+    } catch (error) {
+      if (error instanceof ValiError) {
+        return res.status(400).json({ error: error.issues.map(i => i.message).join("; ") });
+      }
+      return res.status(500).json({ error: "Error al actualizar el comentario" });
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+
+      const id = parseInt(req.params.id);
+      const comentario = await ComentarioService.findById(id);
+
+      if (!comentario) {
+        return res.status(404).json({ error: "Comentario no encontrado" });
+      }
+
+      if (
+        req.user?.id_rol !== Rol.ADMIN &&
+        comentario.creado_por_id_usuario !== req.user!.id_usuario
+      ) {
+        // solo el admin o el creador del comentario pueden eliminarlo
+        return res
+          .status(403)
+          .json({ error: "No tiene permiso para eliminar este comentario" });
+      }
+
+      await ComentarioService.delete(id);
+      res.status(204).send();
+    } catch (error) {
+      return res.status(500).json({ error: "Error al eliminar el comentario" });
+    }
+  }
+
+  static async likeComment(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+      const id_comentario = parseInt(id);
+      const comentario = await ComentarioService.findById(id_comentario);
+      if (!comentario || comentario.id_estado !== 2) {
+        return res
+          .status(404)
+          .json({ error: "Comentario no encontrado o no aprobado" });
+      }
+      await ComentarioService.likeComment(id_comentario, req.user!.id_usuario);
+      res.status(201).json({ message: "Comentario marcado como me gusta" });
+    } catch (error) {
+      return res.status(500).json({ error: "Error al dar me gusta al comentario" });
+    }
+  }
+
+  static async unlikeComment(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ error: "ID no proporcionado" });
+      }
+      const id_comentario = parseInt(id);
+      const comentario = await ComentarioService.findById(id_comentario);
+      if (!comentario || comentario.id_estado !== 2) {
+        return res
+          .status(404)
+          .json({ error: "Comentario no encontrado o no aprobado" });
+      }
+      await ComentarioService.unlikeComment(
+        id_comentario,
+        req.user!.id_usuario
+      );
+      res.status(204).send();
+    } catch (error) {
+      return res.status(500).json({ error: "Error al quitar me gusta al comentario" });
+    }
+  }
+}

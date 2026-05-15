@@ -1,0 +1,320 @@
+.comment {
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  &.reply {
+    border-left: 3px solid var(--bolivia-yellow);
+    margin-left: 24px;
+  }
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.avatar-container {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--bolivia-green);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+
+  &.administrador {
+    color: var(--bolivia-red);
+  }
+
+  &.curador {
+    color: var(--bolivia-green);
+  }
+
+  &.investigador {
+    color: var(--bolivia-yellow);
+  }
+}
+
+.role {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+
+  &.administrador {
+    color: var(--bolivia-red);
+  }
+
+  &.curador {
+    color: var(--bolivia-green);
+  }
+
+  &.investigador {
+    color: var(--bolivia-yellow);
+  }
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.comment-content {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    font-size: 0.85rem;
+    color: var(--bolivia-green);
+    text-transform: none;
+    padding: 2px 8px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+      color: var(--bolivia-yellow);
+    }
+
+    &:hover:not([disabled]) {
+      background: rgba(0, 132, 61, 0.05);
+    }
+  }
+}
+
+.edit-form-wrapper {
+  margin-bottom: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--bolivia-green);
+  border-radius: 8px;
+  padding: 12px;
+  animation: fade-in 0.3s ease-out;
+
+  .comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .full-width { width: 100%; }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+
+      button {
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        transition: transform 0.2s ease;
+
+        &:hover { transform: translateY(-2px); }
+      }
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(218, 41, 28, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    color: var(--text-primary);
+
+    mat-icon { color: var(--bolivia-red); }
+    p { margin: 0; font-size: 0.85rem; }
+  }
+}
+
+.reply-form-wrapper {
+  margin-left: 24px;
+  margin-bottom: 12px;
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  animation: fade-in 0.5s ease-out;
+
+  .comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    mat-form-field {
+      ::ng-deep .mat-mdc-text-field-wrapper {
+        border-radius: 8px;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+
+      button {
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        axl-spinner {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(218, 41, 28, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    color: var(--text-primary);
+    animation: slide-in 0.3s ease-out;
+
+    mat-icon {
+      color: var(--bolivia-red);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.replies {
+  margin: 12px 0 0 24px;
+  padding-left: 12px;
+  border-left: 3px solid var(--bolivia-yellow);
+
+  .replies-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--bolivia-green);
+    margin: 0 0 12px;
+  }
+}
+
+.reply-wrapper {
+  padding: 8px 12px;
+}
+
+@media (max-width: 600px) {
+  .comment {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  .comment-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .comment-date {
+    width: 100%;
+    text-align: right;
+  }
+
+  .comment-actions {
+    gap: 6px;
+  }
+
+  .reply {
+    margin-left: 16px;
+  }
+
+  .reply-form-wrapper {
+    margin-left: 16px;
+    padding: 10px;
+  }
+
+  .replies {
+    margin-left: 16px;
+    padding-left: 8px;
+  }
+
+  .reply-wrapper {
+    padding: 6px 8px;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

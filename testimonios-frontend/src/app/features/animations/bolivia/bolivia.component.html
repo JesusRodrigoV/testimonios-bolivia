@@ -1,0 +1,31 @@
+<div class="map-container" #gridContainer>
+  <div >
+    @for (row of redCircles; track $index) {
+      <div class="small justified row">
+        @for (circle of row; track $index) {
+          <div #circle class="circle red" [ngClass]="{ hidden: !circle.visible }"></div>
+        }
+      </div>
+    }
+  </div>
+
+  <div >
+    @for (row of yellowCircles; track $index) {
+      <div class="small justified row">
+        @for (circle of row; track $index) {
+          <div #circle class="circle yellow" [ngClass]="{ hidden: !circle.visible }"></div>
+        }
+      </div>
+    }
+  </div>
+
+  <div >
+    @for (row of greenCircles; track $index) {
+      <div class="small justified row">
+        @for (circle of row; track $index) {
+          <div #circle class="circle green" [ngClass]="{ hidden: !circle.visible }"></div>
+        }
+      </div>
+    }
+  </div>
+</div>

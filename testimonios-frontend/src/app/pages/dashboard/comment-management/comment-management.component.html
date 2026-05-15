@@ -1,0 +1,147 @@
+<div class="management-container">
+  <div class="header">
+    <h1>Gestión de Comentarios</h1>
+    <button mat-button (click)="refreshComments()">
+      <i class="bx bx-refresh"></i>
+      Actualizar
+    </button>
+  </div>
+
+  <div class="filter-chips">
+    @for (filter of statusFilters; track filter.value) {
+      <button
+        class="chip"
+        [class.active]="selectedStatus() === filter.value"
+        (click)="setFilter(filter.value)"
+      >
+        {{ filter.label }}
+      </button>
+    }
+  </div>
+
+  @if (total() > 0) {
+  <div class="table-info">
+    Mostrando {{ (page() - 1) * limit + 1 }}–{{ Math.min(page() * limit, total()) }} de {{ total() }} comentarios
+  </div>
+  }
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Contenido</th>
+          <th>Testimonio</th>
+          <th>Usuario</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (comment of filteredComments; track comment.id_comentario) {
+          <tr>
+            <td class="text-muted">#{{ comment.id_comentario }}</td>
+            <td class="content-cell">{{ comment.contenido }}</td>
+            <td>
+              @if (comment.testimonios) {
+              <a (click)="openTestimonyDialog(comment.id_testimonio)" class="testimony-link">
+                {{ comment.testimonios.titulo }}
+              </a>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </td>
+            <td>
+              <span class="user-info" [ngClass]="getRoleClass(comment.usuarios.rol.nombre)">
+                {{ comment.usuarios.nombre }}
+              </span>
+            </td>
+            <td class="date-cell">{{ comment.fecha_creacion | date: 'short' }}</td>
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-pendiente': comment.id_estado === 1,
+                  'status-aprobado': comment.id_estado === 2,
+                  'status-rechazado': comment.id_estado === 3
+                }"
+              >
+                {{ comment.id_estado === 1 ? 'Pendiente' : comment.id_estado === 2 ? 'Aprobado' : 'Rechazado' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                @if (comment.replies && comment.replies.length > 0) {
+                  <button class="btn-icon view-replies" (click)="openRepliesDialog(comment)" matTooltip="Ver respuestas ({{ comment.replies.length }})">
+                    <i class="bx bx-message"></i>
+                  </button>
+                }
+                @if (comment.id_estado !== 2) {
+                  <button class="btn-icon approve" (click)="approveComment(comment.id_comentario)" matTooltip="Aprobar">
+                    <i class="bx bx-check"></i>
+                  </button>
+                }
+                @if (comment.id_estado !== 3) {
+                  <button class="btn-icon reject" (click)="rejectComment(comment.id_comentario)" matTooltip="Rechazar">
+                    <i class="bx bx-x"></i>
+                  </button>
+                }
+                <button class="btn-icon delete" (click)="deleteComment(comment.id_comentario)" matTooltip="Eliminar">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              <i class="bx bx-message-square-x"></i>
+              <p>No hay comentarios para mostrar.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (isLoading) {
+      <div class="loading-overlay">
+        <axl-spinner />
+      </div>
+    }
+  </div>
+
+  @if (totalPages() > 1) {
+  <div class="pagination">
+    <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">
+      <i class="bx bx-chevron-left"></i>
+      Anterior
+    </button>
+
+    @if (pages[0] > 1) {
+      <button class="page-btn" (click)="goToPage(1)">1</button>
+      @if (pages[0] > 2) {
+        <span class="page-ellipsis">…</span>
+      }
+    }
+
+    @for (p of pages; track p) {
+      <button class="page-btn" [class.active]="p === page()" (click)="goToPage(p)">
+        {{ p }}
+      </button>
+    }
+
+    @if (pages[pages.length - 1] < totalPages()) {
+      @if (pages[pages.length - 1] < totalPages() - 1) {
+        <span class="page-ellipsis">…</span>
+      }
+      <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+    }
+
+    <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">
+      Siguiente
+      <i class="bx bx-chevron-right"></i>
+    </button>
+  </div>
+  }
+</div>

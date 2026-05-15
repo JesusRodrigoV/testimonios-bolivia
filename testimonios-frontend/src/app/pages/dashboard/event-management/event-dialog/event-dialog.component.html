@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ data.id_evento ? "Editar" : "Crear" }} Evento Histórico</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre del evento</mat-label>
+      <input matInput formControlName="nombre" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="descripcion" rows="4" required></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha</mat-label>
+      <input matInput formControlName="fecha" type="date" required />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!form.valid"
+    (click)="onSubmit()"
+  >
+    {{ data.id_evento ? "Actualizar" : "Crear" }}
+  </button>
+</mat-dialog-actions>

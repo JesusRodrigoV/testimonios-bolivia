@@ -1,0 +1,60 @@
+@if (showResults$ | async) {
+<div class="search-results">
+  <div class="results-header">
+    <h2>Resultados de búsqueda</h2>
+    <button
+      mat-icon-button
+      class="close-btn"
+      (click)="closeResults()"
+      aria-label="Cerrar resultados"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (searching()) {
+  <mat-progress-bar mode="indeterminate" class="search-progress" />
+  }
+
+  <div class="results-container">
+    @if (loading() && testimonies().length === 0) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando resultados...</p>
+      </div>
+    } @else if (!loading() && testimonies().length === 0 && searchQuery()) {
+      <div class="empty">
+        <mat-icon>info</mat-icon>
+        <p>No se encontraron resultados para "{{ searchQuery() }}"</p>
+      </div>
+    } @else if (error() && testimonies().length === 0) {
+      <div class="error">
+        <mat-icon>error</mat-icon>
+        <p>{{ error() }}</p>
+      </div>
+    } @else {
+      <mat-list>
+        @for (testimony of testimonies(); track testimony.id) {
+          <mat-list-item
+            (click)="onTestimonySelect(testimony)"
+            (keydown)="onTestimonyKeydown($event, testimony)"
+            class="testimony-item"
+            role="button"
+            tabindex="0"
+          >
+              <span matListItemTitle>{{ testimony.title }}</span>
+              <span matListItemLine>Por: {{ testimony.author || 'Desconocido' }}</span>
+              <span matListItemLine>{{ testimony.createdAt | date: 'short' }}</span>
+              <span matListItemLine>{{ testimony.description | slice: 0:100 }}...</span>
+          </mat-list-item>
+        }
+      </mat-list>
+      @if (hasMore() && !searching()) {
+      <div class="load-more">
+        <button mat-button (click)="loadMore()">Cargar más</button>
+      </div>
+      }
+    }
+  </div>
+</div>
+}

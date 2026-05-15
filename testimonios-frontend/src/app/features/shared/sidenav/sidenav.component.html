@@ -1,0 +1,25 @@
+<div class="sidenav-inner" [class.collapsed]="!isExpanded()">
+  <div class="sidenav-header">
+    <button
+      mat-icon-button
+      class="collapse-btn"
+      (click)="toggle()"
+      [matTooltip]="isExpanded() ? 'Colapsar' : 'Expandir'"
+      matTooltipPosition="right"
+    >
+      <mat-icon>{{ isExpanded() ? "chevron_left" : "chevron_right" }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="sidenav-items">
+    @for(item of filteredItems(); track item.text; let first = $first) {
+      @if(item.dividerBefore && !first) {
+        <mat-divider class="sidenav-divider" />
+      }
+      <app-sidenav-button
+        [item]="item"
+        [isExpanded]="isExpanded()"
+      />
+    }
+  </div>
+</div>

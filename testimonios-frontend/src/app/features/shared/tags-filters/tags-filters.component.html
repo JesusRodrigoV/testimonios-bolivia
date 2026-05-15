@@ -1,0 +1,16 @@
+<mat-chip-listbox
+  class="mat-mdc-chip-set-vertical"
+  aria-label="Filtrar por etiquetas"
+  multiple
+  (change)="onSelectionChange($event)"
+>
+  @for (tag of tags; track tag.id) {
+    <mat-chip-option
+      [selectable]="true"
+      [selected]="selectedTags().includes(tag.id)"
+      (selectionChange)="toggleTag(tag.id)"
+    >
+      {{ tag.name }}
+    </mat-chip-option>
+  }
+</mat-chip-listbox>

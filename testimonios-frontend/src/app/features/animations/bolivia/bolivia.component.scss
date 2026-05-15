@@ -1,0 +1,59 @@
+:host {
+  --red: #DA291C;
+  --yellow: #FFE800;
+  --green: #00843D;
+  --text: #0f0f0f;
+
+
+}
+
+.map-container {
+  padding: 15px;
+  width: 80vw;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.small.justified.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.circle {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.circle.red {
+  background: var(--red);
+}
+
+.circle.yellow {
+  background: var(--yellow);
+}
+
+.circle.green {
+  background: var(--green);
+}
+
+.circle.hidden {
+  visibility: hidden;
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    width: 90vw;
+    padding: 10px;
+  }
+
+  .circle {
+    width: 15px;
+    height: 15px;
+  }
+
+  .small.justified.row {
+    margin-bottom: 8px;
+  }
+}

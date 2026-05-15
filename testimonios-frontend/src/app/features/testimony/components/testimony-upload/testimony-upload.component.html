@@ -1,0 +1,289 @@
+<div class="upload-container">
+  <h2>Subir un nuevo testimonio</h2>
+  <mat-stepper
+    #stepper
+    linear="true"
+    orientation="horizontal"
+    animationDuration="300"
+    [disableRipple]="false"
+    aria-label="Formulario para subir testimonio"
+  >
+    <!-- Paso 1: Subir archivo -->
+    <mat-step
+      [completed]="isFileUploaded()"
+      [editable]="true"
+      label="Subir archivo multimedia"
+    >
+      <ng-template matStepLabel>Subir archivo</ng-template>
+      <div class="step-form">
+        <div class="form-group upload-wrapper">
+          <div class="upload-state" [class.uploading]="cargandoTestimonio()">
+            <app-file-upload
+              accept=".mp4,.mov,.mp3,.wav,.jpg,.jpeg,.png"
+              dragMessage="Arrastra o selecciona un archivo (video o audio)"
+              (fileSelected)="onFileSelected($event)"
+              [mediaPreview]="mediaPreview"
+              [mediaType]="mediaType"
+            ></app-file-upload>
+            @if (cargandoTestimonio()) {
+              <axl-spinner size="small" />
+              <div class="upload-overlay">
+                <span>Subiendo el testimonio...</span>
+              </div>
+            }
+          </div>
+          @if (!isFileUploaded() && fileUploadTouched()) {
+            <mat-error>Debes subir un archivo antes de continuar</mat-error>
+          }
+        </div>
+        <div class="step-actions">
+          <button
+            mat-button
+            matStepperNext
+            type="button"
+            (click)="markFileStepTouched()"
+            [disabled]="cargandoTestimonio() || !isFileUploaded()"
+          >
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 2: Información básica -->
+    <mat-step
+      label="Información básica"
+      [completed]="isInfoFormValid()"
+    >
+      <ng-template matStepLabel>Información</ng-template>
+      <div class="step-form">
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Título</mat-label>
+            <input
+              matInput
+              id="title"
+              [(ngModel)]="testimony.title"
+              name="title"
+              placeholder="Título del testimonio"
+              required
+              minlength="3"
+              #title="ngModel"
+            />
+            @if (title.invalid && title.touched) {
+              <mat-error>El título debe tener al menos 3 caracteres</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <textarea
+              matInput
+              id="description"
+              [(ngModel)]="testimony.description"
+              name="description"
+              placeholder="Describe el testimonio — qué sucede, quién habla, contexto histórico"
+              required
+              minlength="5"
+              #description="ngModel"
+            ></textarea>
+            @if (description.invalid && description.touched) {
+              <mat-error>La descripción debe tener al menos 5 caracteres</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">
+            Anterior
+          </button>
+          <button
+            mat-button
+            matStepperNext
+            type="button"
+            [disabled]="!isInfoFormValid()"
+          >
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 3: Categorías y etiquetas -->
+    <mat-step
+      label="Categorías y etiquetas"
+      [completed]="isMetaFormValid()"
+    >
+      <ng-template matStepLabel>Categorías</ng-template>
+      <div class="step-form">
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Categorías</mat-label>
+            <mat-select
+              [(ngModel)]="testimony.selectedCategories"
+              name="categories"
+              multiple
+            >
+              @for (category of categories; track category.id_categoria) {
+                <mat-option [value]="category.nombre">
+                  {{ category.nombre }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Etiquetas</mat-label>
+            <mat-chip-grid
+              #chipGrid
+              [(ngModel)]="testimony.selectedTags"
+              name="tags"
+              aria-label="Selección de etiquetas"
+            >
+              @for (tag of testimony.selectedTags; track tag) {
+                <mat-chip-row
+                  [removable]="true"
+                  (removed)="removeTag(tag)"
+                >
+                  {{ tag }}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              }
+              <input
+                placeholder="Añadir etiqueta..."
+                [matChipInputFor]="chipGrid"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="addTag($event)"
+                [formControl]="tagCtrl"
+                [matAutocomplete]="auto"
+                aria-label="Añadir etiqueta"
+              />
+            </mat-chip-grid>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              (optionSelected)="selectedTag($event)"
+            >
+              @for (tag of filteredTags; track tag) {
+                <mat-option [value]="tag">
+                  {{ tag }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">
+            Anterior
+          </button>
+          <button mat-button matStepperNext type="button">
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 4: Ubicación y evento -->
+    <mat-step label="Ubicación y evento" [optional]="true">
+      <ng-template matStepLabel>Ubicación</ng-template>
+      <div class="step-form">
+        <div class="form-group location">
+          <mat-checkbox
+            [(ngModel)]="shareLocation"
+            name="shareLocation"
+            (change)="onShareLocationChange()"
+          >
+            Compartir mi ubicación actual
+          </mat-checkbox>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Evento histórico (opcional)</mat-label>
+            <mat-select
+              [(ngModel)]="testimony.eventId"
+              name="eventId"
+              (selectionChange)="onEventChange()"
+            >
+              <mat-option [value]="null">Ninguno</mat-option>
+              @for (event of events; track event.id) {
+                <mat-option [value]="event.id">
+                  {{ event.name }} ({{ formatDate(event.date) }})
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">
+            Anterior
+          </button>
+          <button mat-button matStepperNext type="button">
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 5: Revisión -->
+    <mat-step label="Revisar y enviar">
+      <ng-template matStepLabel>Revisar</ng-template>
+      <div class="step-form">
+        <div class="review-section">
+          <h3>Resumen del testimonio</h3>
+          <div class="review-item">
+            <strong>Archivo:</strong>
+            <span>{{ mediaType ? mediaType + ' subido' : 'No se ha subido archivo' }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Título:</strong>
+            <span>{{ testimony.title || 'No especificado' }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Descripción:</strong>
+            <span>{{ testimony.description || 'No especificada' }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Categorías:</strong>
+            <span>{{ testimony.selectedCategories.length ? testimony.selectedCategories.join(', ') : 'Ninguna' }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Etiquetas:</strong>
+            <span>{{ testimony.selectedTags.length ? testimony.selectedTags.join(', ') : 'Ninguna' }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Evento:</strong>
+            <span>{{ eventName() }}</span>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">
+            Anterior
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="submitTestimony()"
+            [disabled]="submitting || !isInfoFormValid()"
+          >
+            @if (submitting) {
+              <axl-spinner size="small" />
+            } @else {
+              <span>Subir Testimonio</span>
+            }
+          </button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

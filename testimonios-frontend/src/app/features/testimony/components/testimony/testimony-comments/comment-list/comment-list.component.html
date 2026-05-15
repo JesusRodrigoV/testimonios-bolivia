@@ -1,0 +1,48 @@
+<div class="comments-list">
+  @if (isLoading()) {
+  <div class="loading">
+    <axl-spinner />
+    <p>Cargando comentarios...</p>
+  </div>
+  } @else {
+  @for (comment of flattenedComments; track comment.id_comentario) {
+  <div class="comment-wrapper" [ngStyle]="{ 'margin-left': (comment.depth * 24) + 'px' }">
+    @if (editingId === comment.id_comentario) {
+    <app-comment-form
+      [formType]="'edit'"
+      [testimonyId]="testimonyId()"
+      [commentId]="comment.id_comentario"
+      [initialContent]="comment.contenido"
+      (editSubmitted)="onEditSubmitted($event)"
+      (editCancelled)="cancelEdit()"
+    />
+    } @else {
+    <app-comment-item [comment]="comment" [isReply]="comment.parent_id !== null"
+      [isLiked]="comment.isLiked!" [likeCount]="comment.likeCount!" [isAuthenticated]="isAuthenticated"
+      [isAuthor]="isCommentAuthor(comment)" [isAdmin]="currentUserRole === adminRole"
+      (toggleLike)="toggleLike($event)" (startReply)="startReply($event)"
+      (edit)="startEdit($event)" (delete)="deleteComment($event)">
+      @if ((comment.replies.length || 0) > 0) {
+      <div class="replies-toggle">
+        <button mat-button (click)="toggleReplies(comment.id_comentario)" class="toggle-replies-btn">
+          <mat-icon>{{ expandedReplies[comment.id_comentario] ? 'expand_less' : 'expand_more' }}</mat-icon>
+          {{ expandedReplies[comment.id_comentario] ? 'Ocultar' : 'Ver' }} respuestas ({{ comment.replies.length }})
+        </button>
+      </div>
+      }
+    </app-comment-item>
+    @if (replyingTo === comment.id_comentario) {
+    <app-comment-form [formType]="'reply'" [testimonyId]="testimonyId()" [parentId]="comment.id_comentario"
+      (commentSubmitted)="onReplySubmitted($event)" (cancelled)="cancelReply()" />
+    }
+    }
+  </div>
+  }@empty {
+  <div class="empty-state">
+    <i class="bx bx-message-square-dots"></i>
+    <p>Aún no hay comentarios.</p>
+    <span class="empty-hint">¡Sé el primero en compartir tu opinión!</span>
+  </div>
+  }
+  }
+</div>

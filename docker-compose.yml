@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: testimonios-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: testimonios
+      POSTGRES_PASSWORD: testimonios
+      POSTGRES_DB: testimonios
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testimonios"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - testimonios-net
+
+  redis:
+    image: redis:8.6-alpine
+    container_name: testimonios-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - testimonios-net
+
+  backend:
+    build:
+      context: ./testimonios-backend
+    container_name: testimonios-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file: ./testimonios-backend/docker.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - testimonios-net
+
+  frontend:
+    build:
+      context: ./testimonios-frontend
+    container_name: testimonios-frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - testimonios-net
+
+networks:
+  testimonios-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

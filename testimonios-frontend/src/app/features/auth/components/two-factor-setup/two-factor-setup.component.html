@@ -1,0 +1,59 @@
+<div class="setup-container">
+  <div class="verification-card">
+    <h1>Configurar Autenticación de dos factores</h1>
+    <p>
+      Escanea el código QR con tu aplicación de autenticación (como Google Authenticator o Authy) o ingresa manualmente este código:
+    </p>
+
+    @if (setupData(); as data) {
+      <div class="qr-container">
+        <img [src]="data.qrCode" alt="Código QR para autenticación" class="qr-code" />
+        <div class="secret-key">
+          <code>{{ data.secret }}</code>
+        </div>
+      </div>
+    }
+
+    <form [formGroup]="setupForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Código de verificación</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="token"
+          placeholder="Ingresa el código de 6 dígitos"
+          maxlength="6"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+        />
+        <mat-icon matPrefix>dialpad</mat-icon>
+        @if (setupForm.get('token')?.errors?.['required']) {
+        <mat-error>
+          El código es requerido
+        </mat-error>
+        }
+        @if (setupForm.get('token')?.errors?.['minlength']) {
+        <mat-error>
+          El código debe tener 6 dígitos
+        </mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        type="submit"
+        class="submit-button"
+        [disabled]="setupForm.invalid || loading()"
+      >
+        @if (!loading()) {
+        <mat-icon>check_circle</mat-icon>
+        }
+        {{ loading() ? 'Verificando...' : 'Verificar código' }}
+      </button>
+
+      @if (error()) {
+        <div class="error-message">{{ error() }}</div>
+      }
+    </form>
+  </div>
+</div>

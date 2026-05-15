@@ -1,0 +1,91 @@
+.audio-player {
+  display: block;
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--bg-card);
+  box-shadow: 0 4px 12px var(--shadow-md);
+  transition: box-shadow 0.3s ease;
+}
+
+:root.dark-mode .audio-player {
+  box-shadow: 0 4px 16px var(--shadow-md);
+}
+
+.audio-player ::ng-deep {
+  .controls-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+  }
+
+  .mat-button {
+    color: var(--color-primary);
+    min-width: 32px;
+    padding: 0;
+    line-height: 32px;
+    transition: color 0.3s ease;
+
+  }
+
+  .mat-slider {
+    width: 120px;
+    height: 24px;
+    background: var(--border-color);
+  }
+
+  .mat-slider-thumb {
+    background: var(--color-primary);
+    width: 12px;
+    height: 12px;
+  }
+
+  .mat-slider-track-fill {
+    background: var(--color-primary);
+  }
+
+  .title-marquee {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .audio-player {
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .audio-player ::ng-deep {
+    .controls-container {
+      gap: 8px !important;
+    }
+
+    .mat-button {
+      min-width: 24px;
+      line-height: 24px;
+    }
+
+    .mat-slider {
+      width: 80px;
+      height: 20px;
+    }
+
+    .mat-slider-thumb {
+      width: 10px;
+      height: 10px;
+    }
+
+    .title-marquee {
+      font-size: 0.9rem;
+      max-width: 100px;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+<div class="title">
+  <h1>Foro</h1>
+</div>
+
+<div class="forum-posts">
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Cargando temas...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <p>{{ error() }}</p>
+      <button mat-button color="accent" (click)="loadTopics()">Reintentar</button>
+    </div>
+  } @else if (topics.length === 0) {
+    <div class="empty-state">
+      <p>No hay temas en el foro</p>
+      <button mat-button color="accent" [routerLink]="['/forum/create']">Crear un tema</button>
+    </div>
+  } @else {
+    @for(topic of topics; track topic.id_forotema){
+      @defer (on viewport) {
+        <app-forum-post [topicInfo]="topic" />
+        <mat-divider />
+      } @placeholder {
+        <div class="post-placeholder" aria-hidden="true"></div>
+      }
+    }
+  }
+</div>
+
+@if (totalTopics > pageSize) {
+  <mat-paginator
+    [length]="totalTopics"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    (page)="onPageChange($event)"
+    [showFirstLastButtons]="true"
+    [pageSizeOptions]="[10, 20, 50]">
+  </mat-paginator>
+}
+
+<button mat-fab color="accent" class="fab-button" [routerLink]="['/forum/create']" aria-label="Crear nuevo tema"
+  matTooltip="Crear nuevo tema" matTooltipHideDelay="600" matTooltipPosition="left">
+  <mat-icon>add</mat-icon>
+</button>

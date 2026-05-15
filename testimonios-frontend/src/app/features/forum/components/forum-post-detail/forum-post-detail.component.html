@@ -1,0 +1,145 @@
+<div class="forum-post-detail">
+  <div class="post-detail">
+    <div class="post-actions-bar">
+      <button mat-icon-button color="accent" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="post-actions-right">
+        @if (forumPost && currentUserId === forumPost.creado_por_id_usuario) {
+          <button mat-icon-button color="primary" [routerLink]="['/forum/edit', forumPost.id_forotema]" matTooltip="Editar tema">
+            <mat-icon>edit</mat-icon>
+          </button>
+        }
+        @if (forumPost && (currentUserId === forumPost.creado_por_id_usuario || currentUserRole === 1)) {
+          <button mat-icon-button color="warn" (click)="onDeleteTopic()" matTooltip="Eliminar tema">
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (isLoadingPost()) {
+      <div class="loading">
+        <axl-spinner />
+      </div>
+    } @else if (forumPost) {
+      <div class="post-header">
+        <div class="avatar">
+          @if (forumPost.usuarios?.profile_image) {
+            <img [ngSrc]="forumPost.usuarios!.profile_image!" alt="Avatar" width="48" height="48" />
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+        <div class="header-content">
+          <h2 class="post-title">{{ forumPost.titulo }}</h2>
+          <div class="post-meta">
+            @if (forumPost.usuarios?.nombre) {
+              <span class="post-author">{{ forumPost.usuarios!.nombre }}</span>
+            }
+            <span class="post-date">{{ forumPost.fecha_creacion | date: 'MMM d, yyyy, h:mm a' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-content">
+        <div [innerHTML]="forumPost.descripcion" class="post-description"></div>
+      </div>
+
+      @if (forumPost.eventos_historicos || forumPost.testimonios) {
+        <div class="post-links">
+          @if (forumPost.eventos_historicos) {
+            <span class="link-badge">Evento: {{ forumPost.eventos_historicos.nombre }}</span>
+          }
+          @if (forumPost.testimonios) {
+            <span class="link-badge">Testimonio: {{ forumPost.testimonios.titulo }}</span>
+          }
+        </div>
+      }
+
+      <div class="comment-form-wrapper">
+        <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="comment-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Escribe un comentario</mat-label>
+            <textarea
+              matInput
+              formControlName="contenido"
+              placeholder="¿Qué opinas sobre este tema?"
+              rows="4"
+              required
+            ></textarea>
+            @if (commentForm.get('contenido')?.value?.length > 0) {
+              <mat-hint align="end">{{ commentForm.get('contenido')?.value?.length || 0 }}/500</mat-hint>
+            }
+          </mat-form-field>
+          <div class="form-actions">
+            <button
+              mat-raised-button
+              color="accent"
+              type="submit"
+              [disabled]="commentForm.invalid || isSubmitting()"
+            >
+              @if (isSubmitting()) {
+                <axl-spinner size="small" />
+                Enviando...
+              } @else {
+                Comentar
+              }
+            </button>
+          </div>
+        </form>
+        @if (commentError()) {
+          <div class="error-message">
+            <mat-icon>error</mat-icon>
+            <p>{{ commentError() }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="comments-section">
+    <div class="comments-header">
+      <h3 class="comments-title">Comentarios ({{ totalComments }})</h3>
+      <div class="sort-toggle">
+        <button mat-button [class.active]="commentSort() === 'newest'" (click)="setCommentSort('newest')">
+          Más nuevos
+        </button>
+        <button mat-button [class.active]="commentSort() === 'oldest'" (click)="setCommentSort('oldest')">
+          Más antiguos
+        </button>
+      </div>
+    </div>
+    @if (isLoadingComments()) {
+      <div class="loading">
+        <axl-spinner />
+        <p>Cargando comentarios...</p>
+      </div>
+    } @else {
+      @if (forumComments.length > 0) {
+        @for (comment of forumComments; track comment.id_forocoment) {
+          <div class="comment-wrapper">
+            <app-forum-comment
+              [comentario]="comment"
+              [isReply]="false"
+              [topicId]="id"
+              (replySubmitted)="onReplySubmitted($event)"
+              (commentDeleted)="onCommentDeleted($event)"
+            />
+          </div>
+        }
+        @if (hasMoreComments) {
+          <div class="load-more">
+            <button mat-button color="accent" (click)="loadMoreComments()">
+              Cargar más comentarios ({{ totalComments - forumComments.length }} restantes)
+            </button>
+          </div>
+        }
+      } @else {
+        <div class="no-comments">
+          <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+        </div>
+      }
+    }
+  </div>
+</div>

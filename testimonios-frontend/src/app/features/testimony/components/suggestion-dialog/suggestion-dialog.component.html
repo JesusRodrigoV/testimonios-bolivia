@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Sugerir Mejora</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Campo a mejorar</mat-label>
+      <mat-select formControlName="field">
+        @for (field of fields; track field.value) {
+          <mat-option [value]="field.value">{{ field.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Valor sugerido</mat-label>
+      <textarea
+        matInput
+        formControlName="value"
+        rows="4"
+        placeholder="Describí el valor que debería tener"
+      ></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid">Enviar</button>
+</mat-dialog-actions>

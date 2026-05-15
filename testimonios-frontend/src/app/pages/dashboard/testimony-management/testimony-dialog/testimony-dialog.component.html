@@ -1,0 +1,52 @@
+<div class="dialog-content">
+  <h2>Detalles del Testimonio</h2>
+  <div class="testimony-details">
+    <p><strong>ID:</strong> #{{ testimony.id }}</p>
+    <p><strong>Título:</strong> {{ testimony.title }}</p>
+    <p><strong>Descripción:</strong> {{ testimony.description }}</p>
+    <p>
+      <strong>Contenido:</strong> {{ testimony.content || "Sin contenido" }}
+    </p>
+    <p><strong>Autor:</strong> {{ testimony.author }}</p>
+    <p><strong>Estado:</strong> {{ testimony.status | titlecase }}</p>
+    <p>
+      <strong>Categorías:</strong>
+      {{ testimony.categories.join(", ") || "Ninguna" }}
+    </p>
+    <p>
+      <strong>Etiquetas:</strong> {{ testimony.tags.join(", ") || "Ninguna" }}
+    </p>
+    <p><strong>Evento:</strong> {{ testimony.event || "Ninguno" }}</p>
+    <p>
+      <strong>Fecha de Creación:</strong>
+      {{ testimony.createdAt | date: "medium" }}
+    </p>
+    @if (testimony.url) {
+      <div class="media-container">
+        <strong>Medio:</strong>
+        {{ testimony.format }}
+        @if (testimony.format === MediaFormat.Video) {
+          <app-video-player class="media" [videoUrl]="testimony.url" />
+        } @else {
+          <audio
+            [src]="testimony.url"
+            controls
+            loading="lazy"
+            class="media"
+          ></audio>
+        }
+      </div>
+    }
+  </div>
+  @if (testimony.status === StatusEnum.PENDIENTE) {
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="approve()">Aprobar</button>
+      <button mat-raised-button color="warn" (click)="reject()">Rechazar</button>
+      <button mat-button (click)="dialogRef.close()">Cancelar</button>
+    </div>
+  } @else {
+    <div class="actions">
+      <button mat-button (click)="dialogRef.close()">Cerrar</button>
+    </div>
+  }
+</div>

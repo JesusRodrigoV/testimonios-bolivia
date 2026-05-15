@@ -1,0 +1,14 @@
+<div class="audio-player">
+  <ngx-audio-player
+    [autoPlay]="false"
+    muted="muted"
+    [playlist]="playlist"
+    [disablePositionSlider]="mssapDisablePositionSlider"
+    [displayRepeatControls]="mssapDisplayRepeatControls"
+    [displayVolumeControls]="mssapDisplayVolumeControls"
+    [displayVolumeSlider]="mssapDisplayVolumeSlider"
+    [displayTitle]="mssapDisplayTitle"
+    (trackEnded)="onTrackEnded($event)"
+  >
+  </ngx-audio-player>
+</div>
