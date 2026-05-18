@@ -36,7 +36,7 @@ jobs:
 
       - name: Sync to S3
         if: github.event_name == 'push'
-        run: aws s3 sync dist/browser/ s3://${{ secrets.AWS_S3_BUCKET }}/ --delete
+        run: aws s3 sync dist/testimonios-frontend/browser/ s3://${{ secrets.AWS_S3_BUCKET }}/ --delete
 
       - name: Invalidate CloudFront cache
         if: github.event_name == 'push'
