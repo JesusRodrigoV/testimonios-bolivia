@@ -6,6 +6,13 @@ export const config = {
   emailUser: process.env.EMAIL_USER || "",
   emailPassword: process.env.EMAIL_PASSWORD || "",
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:4200",
+  //
+  s3: {
+    bucketName: process.env.AWS_S3_BUCKET_NAME || 'legado-bolivia-multimedia-prod',
+    region: process.env.AWS_REGION || 'us-east-1',
+  },
+
+
   roles: {
     admin: 1,
     curador: 2,

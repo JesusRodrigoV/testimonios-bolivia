@@ -99,3 +99,17 @@ testimoniosRouter.delete(
   clearCache(["/media"]),
   TestimonyController.delete as RequestHandler
 );
+
+//
+testimoniosRouter.post(
+  "/presigned-url",
+  authenticateToken,
+  TestimonyController.obtenerPresignedUrl as RequestHandler
+);
+
+testimoniosRouter.post(
+  "/",
+  authenticateToken,
+  clearCache(["/media"]),
+  TestimonyController.create as RequestHandler
+);

@@ -2,6 +2,9 @@ import type { Request, Response } from "express";
 import { testimonyService, type SearchParams } from "@app/services/testimonio.service";
 import { parse, partial, ValiError } from "valibot";
 import { inputTestimonySchema } from "@app/models/testimonio";
+import { S3Service } from '@app/lib/S3Service';
+
+const s3Service = new S3Service();
 
 export class TestimonyController {
   static async create(req: Request, res: Response) {
@@ -326,4 +329,27 @@ export class TestimonyController {
       });
     }
   }
+
+  //
+  static obtenerPresignedUrl = async (req: Request, res: Response) => {
+    try {
+      const { fileName, mimeType } = req.body;
+
+      if (!fileName || !mimeType) {
+        res.status(400).json({ message: "Faltan metadatos del archivo (fileName, mimeType)" });
+        return;
+      }
+
+      const data = await s3Service.generarUrlSubida(fileName, mimeType);
+      
+      res.status(200).json({
+        success: true,
+        uploadUrl: data.uploadUrl,
+        fileKey: data.key
+      });
+    } catch (error) {
+      console.error("Error en obtenerPresignedUrl:", error);
+      res.status(500).json({ message: "Error al generar la URL de subida" });
+    }
+  };
 }
