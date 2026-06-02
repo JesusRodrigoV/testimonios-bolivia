@@ -9,7 +9,7 @@ export class TranscripcionController {
     this.transcripcionService = new TranscripcionService();
   }
 
-  transcribirArchivo = async (req: Request, res: Response): Promise<void | Response> => { // transcribir un archivo desde la url del testimonio
+  transcribirArchivo = async (req: Request, res: Response): Promise<void | Response> => {
     try {
       const { testimonioId } = req.params;
       const usuarioId = req.user?.id_usuario;
@@ -30,19 +30,6 @@ export class TranscripcionController {
         res.status(404).json({
           success: false,
           message: 'Testimonio no encontrado'
-        });
-        return;
-      }
-
-      const usuario = await prisma.usuarios.findUnique({
-        where: { id_usuario: usuarioId },
-        select: { id_rol: true },
-      });
-
-      if (testimonio.subido_por !== usuarioId && usuario?.id_rol !== undefined && usuario.id_rol > 2) {
-        res.status(403).json({
-          success: false,
-          message: 'No tienes permiso para transcribir este testimonio.'
         });
         return;
       }
