@@ -1,11 +1,11 @@
 import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { NotificationService } from '@app/core/services/notification.service';
@@ -27,12 +27,11 @@ import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-d
 })
 export class EventManagementComponent implements OnInit {
   events: HistoricalEvent[] = [];
-  isLoading = false;
+  isLoading = signal(false);
 
   private adminService = inject(AdminService);
   private dialog = inject(MatDialog);
   private notification = inject(NotificationService);
-  private ref = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
@@ -40,17 +39,17 @@ export class EventManagementComponent implements OnInit {
   }
 
   loadEvents(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.adminService.getEvents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (events) => {
         this.events = events;
-        this.isLoading = false;
-        this.ref.markForCheck();
+        this.isLoading.set(false);
+        
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.notification.error("Error al cargar eventos");
-        this.ref.markForCheck();
+        
       },
     });
   }
@@ -112,7 +111,7 @@ export class EventManagementComponent implements OnInit {
     dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (!result) return;
 
-      this.isLoading = true;
+      this.isLoading.set(true);
 
       this.adminService
         .deleteEvent(id)
@@ -121,15 +120,15 @@ export class EventManagementComponent implements OnInit {
           next: () => {
             this.loadEvents();
             this.notification.success("Evento eliminado con éxito");
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
           error: (error) => {
             this.notification.error(
               error.error?.message || "Error al eliminar evento",
             );
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
         });
     });

@@ -53,7 +53,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error al obtener perfil",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -88,7 +87,6 @@ export class AuthController {
       }
       return res.status(500).json({
         message: "Error al crear el usuario",
-        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -121,7 +119,6 @@ export class AuthController {
       }
       return res.status(500).json({
         message: "Error creating user",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -144,7 +141,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error fetching users",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -204,7 +200,6 @@ export class AuthController {
       }
       return res.status(500).json({
         message: "Error al actualizar usuario",
-        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -260,7 +255,6 @@ export class AuthController {
       }
       return res.status(500).json({
         message: "Error deleting user",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -320,7 +314,6 @@ export class AuthController {
       }
       return res.status(500).json({
         message: "Error al actualizar perfil",
-        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -365,7 +358,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error buscando información del usuario",
-        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -464,20 +456,10 @@ export class AuthController {
       );
 
       res.cookie("refreshToken", refresh_tokens, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
-
-      res.json({
-        accessToken,
-        user: {
-          id_usuario: user.id_usuario,
-          email: user.email,
-          role: user.id_rol,
-          nombre: user.nombre,
-          biografia: user.biografia,
-          profile_image: user.profile_image,
-        },
       });
 
       res.json({
@@ -494,7 +476,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error en el inicio de sesión",
-        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -519,7 +500,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error al procesar la solicitud",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -557,7 +537,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error al restablecer la contraseña",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -593,7 +572,6 @@ export class AuthController {
       console.error("Error in setup2FA:", error);
       return res.status(500).json({
         message: "Error al configurar 2FA",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -648,7 +626,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Error al verificar 2FA",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -676,7 +653,6 @@ export class AuthController {
     } catch (error) {
       return res.status(500).json({
         message: "Logout failed",
-        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
@@ -735,12 +711,9 @@ export class AuthController {
         accessToken: newAccessToken,
       });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error desconocido";
       await UserModel.revokeRefreshToken(refreshToken);
       return res.status(403).json({
         message: "Error al refrescar token",
-        error: errorMessage,
       });
     }
   };

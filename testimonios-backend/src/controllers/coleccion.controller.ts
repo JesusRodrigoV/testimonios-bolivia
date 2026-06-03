@@ -218,7 +218,7 @@ export class ColeccionController {
                             medio: {
                                 select: { nombre: true }
                             },
-                            usuarios_testimonios_subido_porTousuarios: {
+                            usuario_subido_por: {
                                 select: { nombre: true }
                             },
                             testimonios_categorias: {
@@ -260,7 +260,7 @@ export class ColeccionController {
                     createdAt: t.testimonios.created_at,
                     status: t.testimonios.estado.nombre,
                     format: t.testimonios.medio.nombre,
-                    author: t.testimonios.usuarios_testimonios_subido_porTousuarios.nombre,
+                    author: t.testimonios.usuario_subido_por.nombre,
                     categories: t.testimonios.testimonios_categorias.map((tc) => tc.categorias.nombre),
                     tags: t.testimonios.testimonios_etiquetas.map((te) => te.etiquetas.nombre),
                     event: t.testimonios.testimonios_eventos[0]?.eventos_historicos?.nombre,

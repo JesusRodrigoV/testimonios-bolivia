@@ -7,8 +7,7 @@ export const getAllTags = async (req: Request, res: Response) => {
     res.json(tags);
     } catch (error) {
       return res.status(500).json({
-        error:
-          error instanceof Error ? error.message : "Error al obtener etiquetas",
+        error: "Error al obtener etiquetas",
       });
     }
 };

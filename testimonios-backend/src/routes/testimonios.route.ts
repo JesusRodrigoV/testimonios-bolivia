@@ -72,33 +72,6 @@ testimoniosRouter.get(
   TestimonyController.download as RequestHandler
 );
 
-testimoniosRouter.post(
-  "/",
-  authenticateToken,
-  clearCache(["/media"]),
-  TestimonyController.create as RequestHandler
-);
-testimoniosRouter.post(
-  "/validate",
-  authenticateToken,
-  authorizeRoles(Rol.ADMIN, Rol.CURADOR),
-  clearCache(["/media"]),
-  TestimonyController.validate as RequestHandler
-);
-testimoniosRouter.patch(
-  "/:id",
-  authenticateToken,
-  authorizeRoles(Rol.ADMIN, Rol.CURADOR),
-  clearCache(["/media"]),
-  TestimonyController.update as RequestHandler
-);
-testimoniosRouter.delete(
-  "/:id",
-  authenticateToken,
-  authorizeRoles(Rol.ADMIN, Rol.CURADOR),
-  clearCache(["/media"]),
-  TestimonyController.delete as RequestHandler
-);
 
 //
 testimoniosRouter.post(

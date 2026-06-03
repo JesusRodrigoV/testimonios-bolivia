@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -28,8 +28,8 @@ import { forkJoin } from 'rxjs';
 })
 export default class ForumCreateTopicComponent {
   topicForm: FormGroup;
-  isSubmitting = false;
-  errorMessage = '';
+  isSubmitting = signal(false);
+  errorMessage = signal('');
   testimonios: Testimony[] = [];
   events: { id: number; name: string; description: string; date: string }[] = [];
 
@@ -38,6 +38,7 @@ export default class ForumCreateTopicComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private notification = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
 
   constructor() {
     this.topicForm = this.fb.group({
@@ -53,7 +54,7 @@ export default class ForumCreateTopicComponent {
       testimonios: this.testimonioService.getAll(),
       events: this.forumService.getEvents(),
     })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
           this.testimonios = result.testimonios;
@@ -67,14 +68,14 @@ export default class ForumCreateTopicComponent {
 
   onSubmit(): void {
     if (this.topicForm.invalid) return;
-    this.isSubmitting = true;
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
 
     const formValue = this.topicForm.value;
 
     if (!formValue['id_testimonio'] && !formValue['id_evento']) {
-      this.errorMessage = 'Debe vincular al menos un testimonio o un evento histórico';
-      this.isSubmitting = false;
+      this.errorMessage.set('Debe vincular al menos un testimonio o un evento histórico');
+      this.isSubmitting.set(false);
       return;
     }
 
@@ -87,17 +88,17 @@ export default class ForumCreateTopicComponent {
     if (formValue['id_evento']) topicData.id_evento = formValue['id_evento'];
 
     this.forumService.createTopic(topicData)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
           this.notification.success('Tema creado exitosamente');
           this.router.navigate(['/forum']);
         },
         error: (err) => {
-          this.isSubmitting = false;
-          this.errorMessage = err.message || 'Error al crear el tema';
-          this.notification.error(this.errorMessage);
+          this.isSubmitting.set(false);
+          this.errorMessage.set(err.message || 'Error al crear el tema');
+          this.notification.error(this.errorMessage());
         },
       });
   }

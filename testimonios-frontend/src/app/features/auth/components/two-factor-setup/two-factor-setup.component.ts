@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import {
   FormBuilder,
@@ -10,17 +11,20 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { RouterLink } from "@angular/router";
 import { AuthStore } from "@app/auth.store";
 
 @Component({
   selector: "app-two-factor-setup",
   imports: [
+    NgOptimizedImage,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: "./two-factor-setup.component.html",
   styleUrl: "../../auth.styles.scss",

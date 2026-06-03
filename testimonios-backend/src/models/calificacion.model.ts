@@ -1,9 +1,15 @@
-import { maxValue, minValue, number, object, optional, pipe, string } from "valibot";
+import { isoDate, maxValue, minValue, number, object, optional, pipe, string } from "valibot";
 import prisma from "@app/lib/prisma";
+
+export const createCalificacionSchema = object({
+  puntuacion: pipe(number(), minValue(1, "La puntuación debe ser al menos 1"), maxValue(5, "La puntuación debe ser máximo 5")),
+  fecha: pipe(string(), isoDate("La fecha debe tener formato ISO válido")),
+  id_testimonio: pipe(number(), minValue(1, "ID de testimonio requerido")),
+});
 
 export const updateCalificacionSchema = object({
   puntuacion: optional(pipe(number(), minValue(1, "La puntuación debe ser al menos 1"), maxValue(5, "La puntuación debe ser máximo 5"))),
-  fecha: optional(string()),
+  fecha: optional(pipe(string(), isoDate("La fecha debe tener formato ISO válido"))),
   id_testimonio: optional(pipe(number())),
 });
 
@@ -60,8 +66,8 @@ export class CalificacionModel {
     const includeClause = {
       medio: true,
       estado: true,
-      usuarios_testimonios_subido_porTousuarios: true,
-      usuarios_testimonios_verificado_porTousuarios: true,
+      usuario_subido_por: true,
+      usuario_verificado_por: true,
       testimonios_categorias: { include: { categorias: true } },
       testimonios_etiquetas: { include: { etiquetas: true } },
       testimonios_eventos: { include: { eventos_historicos: true } },
@@ -80,7 +86,7 @@ export class CalificacionModel {
       updatedAt: testimony.updated_at,
       status: testimony.estado.nombre,
       format: testimony.medio.nombre,
-      author: testimony.usuarios_testimonios_subido_porTousuarios.nombre,
+      author: testimony.usuario_subido_por.nombre,
       categories: testimony.testimonios_categorias.map((tc: any) => tc.categorias.nombre),
       tags: testimony.testimonios_etiquetas.map((te: any) => te.etiquetas.nombre),
       event: testimony.testimonios_eventos[0]?.eventos_historicos?.nombre || null,

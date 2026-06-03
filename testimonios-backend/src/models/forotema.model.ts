@@ -4,7 +4,7 @@ import { getPaginationParams, paginatedResponse, type PaginatedResponse, type Pa
 import type { Request } from "express";
 
 export const updateForoTemaSchema = object({
-  titulo: optional(pipe(string(), minLength(1, "El título es requerido"), maxLength(200, "El título no debe exceder 200 caracteres"))),
+  titulo: optional(pipe(string(), minLength(1, "El título es requerido"), maxLength(100, "El título no debe exceder 100 caracteres"))),
   descripcion: optional(pipe(string(), minLength(1, "La descripción es requerida"), maxLength(2000, "La descripción no debe exceder 2000 caracteres"))),
   id_evento: optional(pipe(number())),
   id_testimonio: optional(pipe(number())),

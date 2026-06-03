@@ -1,7 +1,7 @@
 import { maxLength, minLength, object, optional, pipe, string } from "valibot";
 import prisma from "@app/lib/prisma";
 
-const coleccionTituloSchema = pipe(string(), minLength(1, "El título es requerido"), maxLength(200, "El título no debe exceder 200 caracteres"));
+const coleccionTituloSchema = pipe(string(), minLength(1, "El título es requerido"), maxLength(150, "El título no debe exceder 150 caracteres"));
 const coleccionDescripcionSchema = optional(pipe(string(), maxLength(1000, "La descripción no debe exceder 1000 caracteres")));
 
 export const createColeccionSchema = object({

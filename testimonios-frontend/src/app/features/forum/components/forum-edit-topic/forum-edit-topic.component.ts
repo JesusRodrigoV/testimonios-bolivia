@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,9 +25,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export default class ForumEditTopicComponent {
   topicForm: FormGroup;
-  isSubmitting = false;
-  isLoading = true;
-  errorMessage = '';
+  isSubmitting = signal(false);
+  isLoading = signal(true);
+  errorMessage = signal('');
   topicId: number;
   events: { id: number; name: string; description: string; date: string }[] = [];
 
@@ -53,7 +53,7 @@ export default class ForumEditTopicComponent {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin({
       topic: this.forumService.getTopicById(this.topicId),
       events: this.forumService.getEvents(),
@@ -66,11 +66,11 @@ export default class ForumEditTopicComponent {
             descripcion: result.topic.descripcion,
           });
           this.events = result.events;
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
         error: () => {
           this.notification.error('Error al cargar el tema');
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.router.navigate(['/forum']);
         },
       });
@@ -78,8 +78,8 @@ export default class ForumEditTopicComponent {
 
   onSubmit(): void {
     if (this.topicForm.invalid) return;
-    this.isSubmitting = true;
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
 
     const formValue = this.topicForm.value;
     const topicData: { titulo?: string; descripcion?: string; id_evento?: number; id_testimonio?: number } = {
@@ -91,14 +91,14 @@ export default class ForumEditTopicComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
           this.notification.success('Tema actualizado exitosamente');
           this.router.navigate(['/forum/post', this.topicId]);
         },
         error: (err) => {
-          this.isSubmitting = false;
-          this.errorMessage = err.message || 'Error al actualizar el tema';
-          this.notification.error(this.errorMessage);
+          this.isSubmitting.set(false);
+          this.errorMessage.set(err.message || 'Error al actualizar el tema');
+          this.notification.error(this.errorMessage());
         },
       });
   }
