@@ -31,7 +31,7 @@ export type Comment = {
   creado_por_id_usuario: number;
   id_forotema: number;
   parent_id: number | null;
-  usuarios: { id_usuario: number; nombre: string; email: string; profile_image: string | null };
+  usuarios: { id_usuario: number; nombre: string; profile_image: string | null };
 };
 
 export interface CommentWithChildren extends Comment {

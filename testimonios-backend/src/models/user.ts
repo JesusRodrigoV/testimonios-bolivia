@@ -44,7 +44,6 @@ export const userSchema = object({
 });
 
 export const updateUserSchema = object({
-  id_usuario: pipe(number()),
   nombre: optional(nombreSchema),
   email: optional(emailSchema),
   id_rol: optional(pipe(number())),

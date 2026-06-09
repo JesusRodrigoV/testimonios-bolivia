@@ -15,12 +15,6 @@ export const updateColeccionSchema = object({
 });
 
 export class ColeccionModel {
-    static async findAll() {
-        return prisma.colecciones.findMany({
-            where: { is_active: true }
-        });
-    }
-
     static async findByUserId(userId: number) {
         return prisma.colecciones.findMany({
             where: { id_usuario: userId, is_active: true }

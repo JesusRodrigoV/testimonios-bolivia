@@ -14,13 +14,6 @@ export const cambiarEstadoSchema = object({
 });
 
 export class NotificacionModel {
-  static async findAll() {
-    return prisma.notificaciones.findMany({
-      where: { is_active: true },
-      include: NOTIFICATION_INCLUDE
-    });
-  }
-
   static async findByUsuario(id_usuario: number) {
     return prisma.notificaciones.findMany({
       where: { id_usuario, is_active: true },

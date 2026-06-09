@@ -414,17 +414,6 @@ export const testimonyService = {
       };
     }
 
-    let cursorClause = {};
-    if (params.cursor) {
-      const [cursorField, cursorValue] = params.cursor.split("|");
-      if (cursorField && cursorValue) {
-        cursorClause = {
-          [cursorField]:
-            params.order === "asc" ? { gt: cursorValue } : { lt: cursorValue },
-        };
-      }
-    }
-
     const orderBy:
       | Prisma.testimoniosOrderByWithRelationInput
       | Prisma.testimoniosOrderByWithRelationInput[] = params.sort
@@ -439,12 +428,36 @@ export const testimonyService = {
     // Límite
     const limit = params.highlighted ? 3 : params.limit ?? 10;
 
-    // Consulta principal
+    if (params.cursor) {
+      const [cursorField, cursorValue] = params.cursor.split("|");
+      if (cursorField && cursorValue) {
+        // Use a composite cursor with the field + id for unique ordering
+        const decodedValue = cursorValue;
+        switch (cursorField) {
+          case "created_at":
+            where.created_at = params.order === "asc"
+              ? { gt: new Date(decodedValue) }
+              : { lt: new Date(decodedValue) };
+            break;
+          case "titulo":
+            where.titulo = params.order === "asc"
+              ? { gt: decodedValue }
+              : { lt: decodedValue };
+            break;
+          case "duracion":
+            where.duracion = params.order === "asc"
+              ? { gt: parseInt(decodedValue) || 0 }
+              : { lt: parseInt(decodedValue) || 0 };
+            break;
+        }
+      }
+    }
+
     const testimonies = await prisma.testimonios.findMany({
-    where: { ...where, ...cursorClause },
-    take: limit,
-    orderBy,
-    select: {
+      where,
+      take: limit,
+      orderBy,
+      select: {
       id_testimonio: true,
       titulo: true,
       descripcion: true,
@@ -554,6 +567,11 @@ export const testimonyService = {
 
     if (!testimony) {
       throw new Error("Testimonio no encontrado");
+    }
+
+    const newStatusId = approve ? config.status.aprobado : config.status.rechazado;
+    if (testimony.id_estado === newStatusId) {
+      throw new Error("El testimonio ya se encuentra en este estado");
     }
 
     const updatedTestimony = await prisma.testimonios.update({
@@ -781,6 +799,27 @@ export const testimonyService = {
     if (data.categories) changes.push(`Categorías actualizadas`);
     if (data.tags) changes.push(`Etiquetas actualizadas`);
     if (data.eventId !== undefined) changes.push(`Evento actualizado`);
+
+    if (changes.length === 0) {
+      return {
+        id: updatedTestimony.id_testimonio,
+        title: updatedTestimony.titulo,
+        description: updatedTestimony.descripcion,
+        content: updatedTestimony.contenido_texto,
+        url: updatedTestimony.url_medio,
+        duration: updatedTestimony.duracion,
+        latitude: updatedTestimony.latitud ? Number(updatedTestimony.latitud) : null,
+        longitude: updatedTestimony.longitud ? Number(updatedTestimony.longitud) : null,
+        createdAt: updatedTestimony.created_at,
+        updatedAt: updatedTestimony.updated_at,
+        status: updatedTestimony.estado.nombre,
+        format: updatedTestimony.medio.nombre,
+        author: updatedTestimony.usuario_subido_por.nombre,
+        categories: updatedTestimony.testimonios_categorias.map((tc: any) => tc.categorias.nombre),
+        tags: updatedTestimony.testimonios_etiquetas.map((te: any) => te.etiquetas.nombre),
+        event: updatedTestimony.testimonios_eventos[0]?.eventos_historicos?.nombre || null,
+      };
+    }
 
     await prisma.historial_testimonios.create({
       data: {

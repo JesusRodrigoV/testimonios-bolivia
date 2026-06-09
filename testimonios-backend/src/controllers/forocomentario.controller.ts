@@ -77,10 +77,13 @@ export class ForoComentarioController {
       if (body.parent_id) {
         const comentarioPadre = await prisma.foro_comentarios.findUnique({
           where: { id_forocoment: body.parent_id, is_active: true },
-          select: { id_forocoment: true },
+          select: { id_forocoment: true, id_forotema: true },
         });
         if (!comentarioPadre) {
           return res.status(404).json({ error: 'Comentario padre no encontrado' });
+        }
+        if (comentarioPadre.id_forotema !== body.id_forotema) {
+          return res.status(400).json({ error: 'El comentario padre no pertenece a este tema' });
         }
       }
 

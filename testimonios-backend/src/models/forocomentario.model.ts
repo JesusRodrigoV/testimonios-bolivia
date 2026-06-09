@@ -6,7 +6,6 @@ import type { Request } from "express";
 const usuarioSelect = {
   id_usuario: true,
   nombre: true,
-  email: true,
   profile_image: true,
   rol: { select: { nombre: true } },
 } as const;
@@ -101,9 +100,8 @@ export class ForoComentarioModel {
       where: { parent_id: id, is_active: true },
       data: { is_active: false },
     });
-    return prisma.foro_comentarios.update({
+    return prisma.foro_comentarios.findUnique({
       where: { id_forocoment: id },
-      data: { is_active: false },
     });
   }
 }

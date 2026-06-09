@@ -1,9 +1,16 @@
 import type { Response } from "express";
 
 const MAX_CONNECTIONS_PER_USER = 5;
+const CLEANUP_INTERVAL_MS = 60000; // 1 minute
 
 export class SSEManager {
   private clients = new Map<number, Set<Response>>();
+  private cleanupTimer: ReturnType<typeof setInterval> | null = null;
+
+  constructor() {
+    this.cleanupTimer = setInterval(() => this.cleanupStale(), CLEANUP_INTERVAL_MS);
+    this.cleanupTimer.unref();
+  }
 
   canAddClient(userId: number): boolean {
     const userClients = this.clients.get(userId);
@@ -70,7 +77,31 @@ export class SSEManager {
   }
 
   get connectedClients(): number {
-    return this.clients.size;
+    let total = 0;
+    for (const [, userClients] of this.clients) {
+      total += userClients.size;
+    }
+    return total;
+  }
+
+  private cleanupStale(): void {
+    for (const [userId, userClients] of this.clients) {
+      for (const res of userClients) {
+        try {
+          res.write(":ping\n\n");
+        } catch {
+          this.removeClient(userId, res);
+        }
+      }
+    }
+  }
+
+  destroy(): void {
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer);
+      this.cleanupTimer = null;
+    }
+    this.clients.clear();
   }
 }
 

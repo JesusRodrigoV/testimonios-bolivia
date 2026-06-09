@@ -63,7 +63,8 @@ export const generateSignedDownloadUrl = (
       expires_at: Math.floor(Date.now() / 1000) + expiresInSeconds,
       attachment: true,
     });
-  } catch {
+  } catch (err) {
+    console.warn('generateSignedDownloadUrl: fallback to unsigned URL for', url, err);
     return url;
   }
 };

@@ -99,36 +99,5 @@ export const authenticateToken = async (
   }
 };
 
-export const authenticateRefreshToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  const refreshToken = req.cookies?.refreshToken;
-
-  if (!refreshToken) {
-    res.status(401).json({ message: "Refresh token requerido" });
-    return;
-  }
-
-  try {
-    const decoded = verifyToken(refreshToken);
-    const refreshTokenRecord = await prisma.refresh_tokens.findFirst({
-      where: {
-        token: refreshToken,
-        id_usuario: decoded.id_usuario,
-        expiresAt: { gt: new Date() },
-      },
-    });
-
-    if (!refreshTokenRecord) {
-      res.status(403).json({ message: "Token inválido o expirado" });
-      return;
-    }
-
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(403).json({ message: "Token inválido o expirado" });
-  }
-};
+// authenticateRefreshToken removed — was dead code that called jwt.verify on
+// a crypto.randomBytes hex string, which always threw JsonWebTokenError.

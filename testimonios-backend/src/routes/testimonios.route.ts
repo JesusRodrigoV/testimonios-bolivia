@@ -1,10 +1,11 @@
 import express from "express";
-import type { RequestHandler } from "express";
+import type { Request, Response, NextFunction, RequestHandler } from "express";
 import { TestimonyController } from "@app/controllers/testimonio.controller";
 import { authenticateToken } from "@app/middleware/authentication";
 import { optionalAuth } from "@app/middleware/optionalAuth";
 import { Rol, authorizeRoles, checkDownloadPermission } from "@app/middleware/authorization";
 import { logActivity } from "@app/middleware/activityLog";
+import apicache from "apicache";
 import { authCache, clearCache, publicCache } from "@app/middleware/cache";
 
 export const testimoniosRouter = express.Router();
@@ -23,7 +24,20 @@ testimoniosRouter.get(
 
 testimoniosRouter.post(
   "/test-lambda",
-  clearCache(["/media"]),
+  TestimonyController.create as RequestHandler
+);
+
+testimoniosRouter.post(
+  "/",
+  authenticateToken,
+  (async (req: Request, res: Response, next: NextFunction) => {
+    res.on('finish', () => {
+      if (res.statusCode < 400) {
+        apicache.clear('/media');
+      }
+    });
+    next();
+  }) as unknown as RequestHandler,
   TestimonyController.create as RequestHandler
 );
 
@@ -85,11 +99,4 @@ testimoniosRouter.post(
   "/presigned-url",
   authenticateToken,
   TestimonyController.obtenerPresignedUrl as RequestHandler
-);
-
-testimoniosRouter.post(
-  "/",
-  authenticateToken,
-  clearCache(["/media"]),
-  TestimonyController.create as RequestHandler
 );

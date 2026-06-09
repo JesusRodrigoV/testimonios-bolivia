@@ -6,7 +6,7 @@ import {
   updateUserSchema,
   UserModel,
 } from "../models";
-import { Rol } from "@app/middleware/authorization";
+import { Rol, invalidateRoleCache } from "@app/middleware/authorization";
 import { partial, safeParse } from "valibot";
 import { sign } from "jsonwebtoken";
 import config from "@config";
@@ -125,19 +125,30 @@ export class AuthController {
 
   static adminGetUsers = async (req: Request, res: Response): Promise<void | Response> => {
     try {
-      const users = await prisma.usuarios.findMany({
-        select: {
-          id_usuario: true,
-          email: true,
-          nombre: true,
-          biografia: true,
-          id_rol: true,
-          last_login: true,
-          two_factor_enabled: true,
-          profile_image: true,
-        },
-      });
-      res.json(users);
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 50));
+      const skip = (page - 1) * limit;
+
+      const [users, total] = await Promise.all([
+        prisma.usuarios.findMany({
+          select: {
+            id_usuario: true,
+            email: true,
+            nombre: true,
+            biografia: true,
+            id_rol: true,
+            last_login: true,
+            two_factor_enabled: true,
+            profile_image: true,
+          },
+          skip,
+          take: limit,
+          orderBy: { id_usuario: 'asc' },
+        }),
+        prisma.usuarios.count(),
+      ]);
+
+      res.json({ data: users, total, page, limit });
     } catch (error) {
       return res.status(500).json({
         message: "Error fetching users",
@@ -189,6 +200,7 @@ export class AuthController {
           two_factor_enabled: true,
         },
       });
+      invalidateRoleCache(userId);
       res.json(updatedUser);
     } catch (error) {
       if (
@@ -248,7 +260,7 @@ export class AuthController {
     } catch (error) {
       if (
         error instanceof Error &&
-        error.message.includes("Record to delete not found")
+        error.message.includes("Record to update not found")
       ) {
         res.status(404).json({ message: "Usuario no encontrado" });
         return;
@@ -276,7 +288,7 @@ export class AuthController {
     }
 
     try {
-      const { password, ...safeData } = result.output;
+      const { password, email, ...safeData } = result.output;
       const updateData = {
         ...safeData,
         profile_image: req.body.profile_image,
@@ -487,14 +499,13 @@ export class AuthController {
     const { email } = req.body;
 
     try {
+      // Always return 200 regardless of whether the user exists (prevents enumeration)
       const user = await UserModel.findUserByEmail(email);
-      if (!user) {
-        res.status(404).json({ message: "Usuario no encontrado" });
-        return;
-      }
 
-      const token = await UserModel.generatePasswordResetToken(user.id_usuario);
-      await sendPasswordResetEmail(email, token);
+      if (user) {
+        const token = await UserModel.generatePasswordResetToken(user.id_usuario);
+        await sendPasswordResetEmail(email, token);
+      }
 
       res.json({ message: "Se ha enviado un email con las instrucciones" });
     } catch (error) {
@@ -550,7 +561,10 @@ export class AuthController {
       }
 
       const { secret, qrCode } = await UserModel.generate2FASecret(userId);
-      const user = await UserModel.findUserByEmail(req.user?.email || "");
+      const user = await prisma.usuarios.findUnique({
+        where: { id_usuario: userId },
+        select: { email: true },
+      });
 
       if (user) {
         await send2FASetupEmail(user.email, secret, qrCode);

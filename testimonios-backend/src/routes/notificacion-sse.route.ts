@@ -13,10 +13,14 @@ interface SseJwtPayload extends JwtPayload {
 export const sseRouter = Router();
 
 sseRouter.get("/stream", async (req, res) => {
-  const token = req.query.token as string;
+  // Prefer Authorization header over query param to avoid token leaking in logs
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : (req.query.token as string | undefined);
 
   if (!token) {
-    res.status(401).json({ error: "Token requerido" });
+    res.status(401).json({ error: "Token requerido (Authorization: Bearer o ?token=)" });
     return;
   }
 
@@ -45,7 +49,7 @@ sseRouter.get("/stream", async (req, res) => {
 
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
     Connection: "keep-alive",
     "X-Accel-Buffering": "no",
   });

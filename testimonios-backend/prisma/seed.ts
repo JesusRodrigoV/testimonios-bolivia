@@ -217,7 +217,7 @@ async function main() {
         id_rol: 1,
       },
     });
-    console.log(`${seedId} Admin creado: admin@testimonios.app / admin123`);
+    console.log(`${seedId} Admin creado correctamente`);
   }
 
   console.log(`${seedId} Seed completado exitosamente`);

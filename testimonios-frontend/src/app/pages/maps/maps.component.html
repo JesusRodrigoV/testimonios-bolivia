@@ -1,6 +1,26 @@
 <section class="page-container" role="main" aria-labelledby="map-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <axl-spinner size="large" />
+      <p>Cargando mapa...</p>
+    </div>
+  }
+
+  @if (error(); as errMsg) {
+    <div class="error-banner" role="alert">
+      <i class='bx bx-error-circle'></i>
+      <span>{{ errMsg }}</span>
+    </div>
+  }
+
   <div class="map-container">
-    <div class="map" leaflet [leafletOptions]="options" (leafletMapReady)="onMapReady($event)" aria-label="Interactive geographical map">
+    <div
+      class="map"
+      leaflet
+      [leafletOptions]="options"
+      (leafletMapReady)="onMapReady($event)"
+      aria-label="Interactive geographical map"
+    >
     </div>
   </div>
 </section>

@@ -35,6 +35,8 @@ export const config = {
     pendiente: 1,
     aprobado: 2,
     rechazado: 3,
+    archivado: 4,
+    borrador: 5,
   },
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
   deepgramApiKey: process.env.DEEPGRAM_API_KEY || '',

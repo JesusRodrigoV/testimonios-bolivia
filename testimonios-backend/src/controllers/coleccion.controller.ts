@@ -121,26 +121,30 @@ export class ColeccionController {
                 return res.status(403).json({ error: 'No tiene permiso para modificar esta colección' });
             }
 
-            const existingEntry = await prisma.colecciones_testimonios.findUnique({
-                where: {
-                    id_coleccion_id_testimonio: { id_coleccion, id_testimonio },
-                },
-            });
-
-            if (existingEntry) {
-                await prisma.colecciones_testimonios.delete({
+            const result = await prisma.$transaction(async (tx) => {
+                const existingEntry = await tx.colecciones_testimonios.findUnique({
                     where: {
                         id_coleccion_id_testimonio: { id_coleccion, id_testimonio },
                     },
                 });
-                return res.json({ action: 'removed' });
-            }
 
-            await prisma.colecciones_testimonios.create({
-                data: { id_coleccion, id_testimonio, fecha_agregado: new Date() }
+                if (existingEntry) {
+                    await tx.colecciones_testimonios.delete({
+                        where: {
+                            id_coleccion_id_testimonio: { id_coleccion, id_testimonio },
+                        },
+                    });
+                    return { action: 'removed' as const };
+                }
+
+                await tx.colecciones_testimonios.create({
+                    data: { id_coleccion, id_testimonio, fecha_agregado: new Date() }
+                });
+
+                return { action: 'added' as const };
             });
 
-            res.status(201).json({ action: 'added' });
+            res.status(result.action === 'added' ? 201 : 200).json(result);
         } catch (error) {
             return res.status(500).json({ error: 'Error al agregar el testimonio a la colección' });
         }
@@ -182,8 +186,8 @@ export class ColeccionController {
     static async getTestimonios(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const skip = parseInt(req.query.skip as string) || 0;
-            const take = parseInt(req.query.take as string) || 50;
+            const skip = Math.max(0, parseInt(req.query.skip as string) || 0);
+            const take = Math.min(100, Math.max(1, parseInt(req.query.take as string) || 50));
 
             if (!id) {
                 return res.status(400).json({ error: 'ID no proporcionado' });
@@ -357,34 +361,23 @@ export class ColeccionController {
 
             const id = parseInt(testimonioId);
 
-            let favoritosColeccion = await prisma.colecciones.findFirst({
-                where: { id_usuario: userId, titulo: 'Favoritos' },
-            });
-
-            if (!favoritosColeccion) {
-                favoritosColeccion = await prisma.colecciones.create({
-                    data: {
-                        titulo: 'Favoritos',
-                        descripcion: 'Colección de favoritos',
-                        fecha_creacion: new Date(),
-                        id_usuario: userId,
-                    },
+            const result = await prisma.$transaction(async (tx) => {
+                let favoritosColeccion = await tx.colecciones.findFirst({
+                    where: { id_usuario: userId, titulo: 'Favoritos' },
                 });
-            }
 
-            const existingEntry = await prisma.colecciones_testimonios.findUnique({
-                where: {
-                    id_coleccion_id_testimonio: {
-                        id_coleccion: favoritosColeccion.id_coleccion,
-                        id_testimonio: id,
-                    },
-                },
-            });
+                if (!favoritosColeccion) {
+                    favoritosColeccion = await tx.colecciones.create({
+                        data: {
+                            titulo: 'Favoritos',
+                            descripcion: 'Colección de favoritos',
+                            fecha_creacion: new Date(),
+                            id_usuario: userId,
+                        },
+                    });
+                }
 
-            let action: 'added' | 'removed';
-
-            if (existingEntry) {
-                await prisma.colecciones_testimonios.delete({
+                const existingEntry = await tx.colecciones_testimonios.findUnique({
                     where: {
                         id_coleccion_id_testimonio: {
                             id_coleccion: favoritosColeccion.id_coleccion,
@@ -392,31 +385,46 @@ export class ColeccionController {
                         },
                     },
                 });
-                action = 'removed';
-            } else {
-                await prisma.colecciones_testimonios.create({
-                    data: {
-                        id_coleccion: favoritosColeccion.id_coleccion,
+
+                if (existingEntry) {
+                    await tx.colecciones_testimonios.delete({
+                        where: {
+                            id_coleccion_id_testimonio: {
+                                id_coleccion: favoritosColeccion.id_coleccion,
+                                id_testimonio: id,
+                            },
+                        },
+                    });
+                } else {
+                    await tx.colecciones_testimonios.create({
+                        data: {
+                            id_coleccion: favoritosColeccion.id_coleccion,
+                            id_testimonio: id,
+                            fecha_agregado: new Date(),
+                        },
+                    });
+                }
+
+                const favoriteIds = (await tx.colecciones_testimonios.findMany({
+                    where: { id_coleccion: favoritosColeccion.id_coleccion },
+                    select: { id_testimonio: true },
+                })).map(fav => fav.id_testimonio);
+
+                const count = await tx.colecciones_testimonios.count({
+                    where: {
                         id_testimonio: id,
-                        fecha_agregado: new Date(),
+                        colecciones: { titulo: 'Favoritos' },
                     },
                 });
-                action = 'added';
-            }
 
-            const favoriteIds = (await prisma.colecciones_testimonios.findMany({
-                where: { id_coleccion: favoritosColeccion.id_coleccion },
-                select: { id_testimonio: true },
-            })).map(fav => fav.id_testimonio);
-
-            const count = await prisma.colecciones_testimonios.count({
-                where: {
-                    id_testimonio: id,
-                    colecciones: { titulo: 'Favoritos' },
-                },
+                return {
+                    action: existingEntry ? 'removed' as const : 'added' as const,
+                    favoriteIds,
+                    favoriteCount: count,
+                };
             });
 
-            res.json({ action, favoriteIds, favoriteCount: count });
+            res.json(result);
         } catch (error) {
             return res.status(500).json({ error: 'Error al togglear favorito' });
         }

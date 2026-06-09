@@ -22,6 +22,7 @@ const authLimiter = rateLimit({
 authRouter.use(logActivity);
 authRouter.use("/login", authLimiter);
 authRouter.use("/forgot-password", authLimiter);
+authRouter.use("/reset-password", authLimiter);
 authRouter.use("/register", authLimiter);
 authRouter.get("/profile", authenticateToken, AuthController.authProfile as unknown as RequestHandler);
 authRouter.get("/user-info/:id", authenticateToken, AuthController.getUserInfo as unknown as RequestHandler);

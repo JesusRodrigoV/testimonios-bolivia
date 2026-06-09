@@ -16,7 +16,7 @@ import { input } from "@angular/core";
 export class SpinnerComponent {
   size = input<string | number>('medium');
 
-  private sizeValue = computed(() => {
+  protected sizeValue = computed(() => {
     const size = this.size();
     
     if (typeof size === 'number') {

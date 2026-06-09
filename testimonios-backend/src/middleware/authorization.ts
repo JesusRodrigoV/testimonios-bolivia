@@ -4,6 +4,10 @@ import NodeCache from "node-cache";
 
 const roleCache = new NodeCache({ stdTTL: 30, checkperiod: 10 });
 
+export const invalidateRoleCache = (userId: number): void => {
+  roleCache.del(`role_${userId}`);
+};
+
 export const Rol = {
   ADMIN: 1,
   CURADOR: 2,

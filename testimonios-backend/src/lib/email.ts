@@ -1,6 +1,9 @@
 import config from "@config";
 import nodemailer from "nodemailer";
 
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
 const transporter = nodemailer.createTransport({
   host: config.emailHost,
   port: config.emailPort,
@@ -221,13 +224,13 @@ export const sendPasswordResetEmail = async (to: string, token: string) => {
             </p>
             
             <div class="action-section">
-                <a href="${resetLink}" class="action-button">Restablecer mi contraseña</a>
+                <a href="${escapeHtml(resetLink)}" class="action-button" target="_blank" rel="noopener noreferrer">Restablecer mi contraseña</a>
                 <p class="expiration-notice">Este enlace expirará en 1 hora</p>
             </div>
             
             <div class="code-section">
                 <p class="code-alternative">Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
-                <div class="manual-code">${resetLink}</div>
+                <div class="manual-code">${escapeHtml(resetLink)}</div>
             </div>
             
             <div class="warning-message">
@@ -545,7 +548,7 @@ export const send2FASetupEmail = async (
                   <p class="secret-title">
                       Si no puedes escanear el código QR, ingresa este código manualmente:
                   </p>
-                  <div class="secret-code">${secret}</div>
+                  <div class="secret-code">${escapeHtml(secret)}</div>
               </div>
               
               <div class="warning-message">

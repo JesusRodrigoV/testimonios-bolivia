@@ -120,12 +120,12 @@ export class ComentarioService {
         return paginatedResponse([], total, params);
       }
 
+      const rootIds = rootComments.map(c => c.id_comentario);
       const childComments = await prisma.comentarios.findMany({
         where: {
-          id_testimonio,
+          parent_id: { in: rootIds },
           id_estado: 2,
           is_active: true,
-          parent_id: { not: null },
         },
         include: {
           usuarios: {
@@ -158,7 +158,11 @@ export class ComentarioService {
     }
 
     const allComments = await prisma.comentarios.findMany({
-      where: { ...where, parent_id: undefined },
+      where: {
+        id_testimonio,
+        id_estado: 2,
+        is_active: true,
+      },
       include: {
         usuarios: {
           select: {
@@ -176,15 +180,19 @@ export class ComentarioService {
     const commentMap = new Map<number, any>();
     const roots: any[] = [];
 
+    const activeParentIds = new Set(
+      allComments.filter(c => !c.parent_id).map(c => c.id_comentario)
+    );
+
     for (const comment of allComments) {
       commentMap.set(comment.id_comentario, { ...comment, replies: [] });
     }
 
     for (const comment of allComments) {
       const node = commentMap.get(comment.id_comentario)!;
-      if (comment.parent_id && commentMap.has(comment.parent_id)) {
+      if (comment.parent_id && activeParentIds.has(comment.parent_id)) {
         commentMap.get(comment.parent_id)!.replies.push(node);
-      } else {
+      } else if (!comment.parent_id) {
         roots.push(node);
       }
     }
@@ -272,29 +280,35 @@ export class ComentarioService {
       where: { parent_id: id, is_active: true },
       data: { is_active: false },
     });
-    return prisma.comentarios.update({
+    await prisma.comentarios.updateMany({
       where: { id_comentario: id },
       data: { is_active: false },
+    });
+    return prisma.comentarios.findUnique({
+      where: { id_comentario: id },
     });
   }
 
   static async likeComment(id_comentario: number, id_usuario: number) {
-    return prisma.likes_comentarios.create({
-      data: {
-        id_comentario,
-        id_usuario,
-      },
-    });
+    try {
+      return await prisma.likes_comentarios.create({
+        data: { id_comentario, id_usuario },
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes('Unique constraint')) {
+        return { alreadyLiked: true };
+      }
+      throw err;
+    }
   }
 
   static async unlikeComment(id_comentario: number, id_usuario: number) {
-    return prisma.likes_comentarios.delete({
-      where: {
-        id_comentario_id_usuario: {
-          id_comentario,
-          id_usuario,
-        },
-      },
+    const result = await prisma.likes_comentarios.deleteMany({
+      where: { id_comentario, id_usuario },
     });
+    if (result.count === 0) {
+      return { notFound: true };
+    }
+    return { deleted: true };
   }
 }
