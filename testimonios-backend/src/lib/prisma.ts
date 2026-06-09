@@ -14,4 +14,4 @@ const logLevels = process.env.NODE_ENV === 'production'
 
 const prisma = new PrismaClient({ log: logLevels });
 
-export default prisma;
+export default prisma;// ci trigger
