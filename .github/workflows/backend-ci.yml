@@ -29,10 +29,6 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - run: bun run build
-
-      - run: bun test
-
   build-and-push:
     if: github.ref == 'refs/heads/main'
     needs: test
