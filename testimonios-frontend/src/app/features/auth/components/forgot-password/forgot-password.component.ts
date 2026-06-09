@@ -7,9 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NotificationService } from '@app/core/services/notification.service';
 import { Router, RouterLink } from "@angular/router";
@@ -21,8 +19,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     NgOptimizedImage,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,

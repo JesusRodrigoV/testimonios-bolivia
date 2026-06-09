@@ -7,9 +7,8 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RouterLink } from "@angular/router";
 import { AuthStore } from "@app/auth.store";
 
@@ -18,10 +17,9 @@ import { AuthStore } from "@app/auth.store";
   imports: [
     NgOptimizedImage,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     RouterLink,
   ],
   templateUrl: "./two-factor-verify.component.html",

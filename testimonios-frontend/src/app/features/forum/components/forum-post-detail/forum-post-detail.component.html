@@ -1,7 +1,7 @@
 <div class="forum-post-detail">
   <div class="post-detail">
     <div class="post-actions-bar">
-      <button mat-icon-button color="accent" (click)="goBack()">
+      <button mat-icon-button color="primary" (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="post-actions-right">
@@ -75,7 +75,7 @@
           <div class="form-actions">
             <button
               mat-raised-button
-              color="accent"
+              color="primary"
               type="submit"
               [disabled]="commentForm.invalid || isSubmitting()"
             >
@@ -130,7 +130,7 @@
         }
         @if (hasMoreComments) {
           <div class="load-more">
-            <button mat-button color="accent" (click)="loadMoreComments()">
+            <button mat-button color="primary" (click)="loadMoreComments()">
               Cargar más comentarios ({{ totalComments - forumComments.length }} restantes)
             </button>
           </div>

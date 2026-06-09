@@ -9,34 +9,6 @@
     @if (isSidebarOpen()) {
     <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
     }
-    <aside class="sidebar" [class.sidebar-open]="isSidebarOpen()">
-      <div class="sidebar-header">
-        <h3>Filtros</h3>
-        <button mat-icon-button class="sidebar-close-btn" (click)="toggleSidebar()" aria-label="Cerrar filtros">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-      <div class="sidebar-filters">
-        <div class="filter-group">
-          <span class="filter-label">Eventos</span>
-          <app-events-filters [(selectedEvents)]="selectedEvents" (selectedEventsChange)="onFilterChange()"></app-events-filters>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Categorías</span>
-          <app-categories-filters [(selectedCategories)]="selectedCategories" (selectedCategoriesChange)="onFilterChange()"></app-categories-filters>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Etiquetas</span>
-          <app-tags-filters [(selectedTags)]="selectedTags" (selectedTagsChange)="onFilterChange()"></app-tags-filters>
-        </div>
-        @if (selectedCategories().length || selectedEvents().length || selectedTags().length) {
-        <button mat-raised-button color="accent" class="clear-filters" (click)="clearFilters()" aria-label="Limpiar todos los filtros">
-          <mat-icon>filter_alt_off</mat-icon>
-          Limpiar filtros
-        </button>
-        }
-      </div>
-    </aside>
     <div class="testimony-feed">
       @defer (when testimonies().length > 0 || !loading()) {
       <div class="testimonies-wrapper">
@@ -72,11 +44,43 @@
       <div class="error">
         <mat-icon>error</mat-icon>
         <p>{{ error() || 'Error al cargar los testimonios. Por favor, intenta de nuevo.' }}</p>
+        <button mat-raised-button class="retry-btn" (click)="loadTestimonies(false)">
+          Reintentar
+        </button>
       </div>
       }
       @if (hasMore() && !loading() && !error()) {
       <div id="loadMoreTrigger" style="height: 1px"></div>
       }
     </div>
+
+    <aside class="sidebar" [class.sidebar-open]="isSidebarOpen()">
+      <div class="sidebar-header">
+        <h3>Filtros</h3>
+        <button mat-icon-button class="sidebar-close-btn" (click)="toggleSidebar()" aria-label="Cerrar filtros">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="sidebar-filters">
+        <div class="filter-group">
+          <span class="filter-label">Eventos</span>
+          <app-events-filters [(selectedEvents)]="selectedEvents" (selectedEventsChange)="onFilterChange()"></app-events-filters>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Categorías</span>
+          <app-categories-filters [(selectedCategories)]="selectedCategories" (selectedCategoriesChange)="onFilterChange()"></app-categories-filters>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Etiquetas</span>
+          <app-tags-filters [(selectedTags)]="selectedTags" (selectedTagsChange)="onFilterChange()"></app-tags-filters>
+        </div>
+        @if (selectedCategories().length || selectedEvents().length || selectedTags().length) {
+        <button mat-raised-button color="accent" class="clear-filters" (click)="clearFilters()" aria-label="Limpiar todos los filtros">
+          <mat-icon>filter_alt_off</mat-icon>
+          Limpiar filtros
+        </button>
+        }
+      </div>
+    </aside>
   </div>
 </div>

@@ -16,11 +16,12 @@
         <app-sidenav />
       </mat-drawer>
       <mat-drawer-content id="main-content">
-        <router-outlet />
+        <router-outlet (activate)="drawer.close()" />
       </mat-drawer-content>
     </mat-drawer-container>
   </main>
+
+  <footer class="app-footer">
+    <app-footer />
+  </footer>
 </div>
-<footer class="app-footer">
-  <app-footer />
-</footer>

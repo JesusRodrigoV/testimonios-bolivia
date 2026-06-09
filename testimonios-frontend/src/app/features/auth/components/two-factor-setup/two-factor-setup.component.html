@@ -1,11 +1,11 @@
 <div class="setup-container">
-  <div class="verification-card">
-    <div class="logo">
+  <div class="login-card">
+    <div class="logo-container">
       <a routerLink="/home">
-        <img ngSrc="assets/images/logo-Sfondo.png" alt="Logo" height="100" width="100" />
+        <img ngSrc="assets/images/logo-Sfondo.png" alt="Logo" height="100" width="100" class="logo" />
       </a>
+      <h1 class="manuscript-text">Configurar Autenticación de dos factores</h1>
     </div>
-    <h1>Configurar Autenticación de dos factores</h1>
     <p>
       Escanea el código QR con tu aplicación de autenticación (como Google Authenticator o Authy) o ingresa manualmente este código:
     </p>
@@ -20,40 +20,38 @@
     }
 
     <form [formGroup]="setupForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="outline">
-        <mat-label>Código de verificación</mat-label>
-        <input
-          matInput
-          type="text"
-          formControlName="token"
-          placeholder="Ingresa el código de 6 dígitos"
-          maxlength="6"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-        />
-        <mat-icon matPrefix>dialpad</mat-icon>
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>dialpad</mat-icon>
+          <input
+            class="custom-input"
+            type="text"
+            formControlName="token"
+            placeholder="Ingresa el código de 6 dígitos"
+            maxlength="6"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+          />
+        </div>
         @if (setupForm.get('token')?.errors?.['required']) {
-        <mat-error>
-          El código es requerido
-        </mat-error>
+          <span class="error-text">El código es requerido</span>
         }
         @if (setupForm.get('token')?.errors?.['minlength']) {
-        <mat-error>
-          El código debe tener 6 dígitos
-        </mat-error>
+          <span class="error-text">El código debe tener 6 dígitos</span>
         }
-      </mat-form-field>
+      </div>
 
       <button
         mat-raised-button
         type="submit"
-        class="submit-button"
+        class="action-button"
         [disabled]="setupForm.invalid || loading()"
       >
-        @if (!loading()) {
-        <mat-icon>check_circle</mat-icon>
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Verificar código
         }
-        {{ loading() ? 'Verificando...' : 'Verificar código' }}
       </button>
 
       @if (error()) {

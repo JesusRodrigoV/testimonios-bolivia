@@ -1,58 +1,54 @@
 <div class="two-factor-container">
-  <div class="verification-card">
-    <div class="logo">
+  <div class="login-card">
+    <div class="logo-container">
       <a routerLink="/home">
-        <img ngSrc="assets/images/logo-Sfondo.png" alt="Logo" height="100" width="100" />
+        <img ngSrc="assets/images/logo-Sfondo.png" alt="Logo" height="100" width="100" class="logo" />
       </a>
+      <h1 class="manuscript-text">Verificación de Dos Factores</h1>
     </div>
-
-    <h1>Verificación de Dos Factores</h1>
     <p>
       Por favor, ingresa el código de verificación generado por tu aplicación de
       autenticación
     </p>
 
     <form [formGroup]="twoFactorForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="outline">
-        <mat-label>Código 2FA</mat-label>
-        <input
-          matInput
-          formControlName="token"
-          placeholder="000000"
-          maxlength="6"
-          autocomplete="one-time-code"
-          inputmode="numeric"
-          pattern="[0-9]*"
-        />
-        <mat-icon matSuffix>lock</mat-icon>
+      <div class="input-container">
+        <div class="input-group">
+          <mat-icon>lock</mat-icon>
+          <input
+            class="custom-input"
+            type="text"
+            formControlName="token"
+            placeholder="000000"
+            maxlength="6"
+            autocomplete="one-time-code"
+            inputmode="numeric"
+            pattern="[0-9]*"
+          />
+        </div>
         @if (twoFactorForm.get('token')?.errors?.['required']) {
-        <mat-error>
-          El código es requerido
-        </mat-error>
+          <span class="error-text">El código es requerido</span>
         }
         @if (twoFactorForm.get('token')?.errors?.['pattern']) {
-        <mat-error>
-          El código debe contener solo números
-        </mat-error>
+          <span class="error-text">El código debe contener solo números</span>
         }
-      </mat-form-field>
+      </div>
 
       <button
         mat-raised-button
         type="submit"
+        class="action-button"
         [disabled]="twoFactorForm.invalid || loading()"
       >
-        <mat-icon>{{
-          loading() ? "hourglass_empty" : "check_circle"
-        }}</mat-icon>
-        {{ loading() ? "Verificando..." : "Verificar código" }}
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Verificar código
+        }
       </button>
 
       @if (error()) {
-        <mat-error>
-          <mat-icon>error_outline</mat-icon>
-          {{ error() }}
-        </mat-error>
+        <div class="error-message">{{ error() }}</div>
       }
     </form>
   </div>

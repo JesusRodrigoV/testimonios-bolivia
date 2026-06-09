@@ -44,7 +44,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px;
-  flex: 1;
+  flex: unset;
   overflow-y: auto;
   overflow-x: hidden;
 }

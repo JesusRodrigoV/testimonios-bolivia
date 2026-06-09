@@ -103,7 +103,7 @@ export const routes: Routes = [
         path: "forum/create",
         loadComponent: () =>
           import(
-            "./features/forum/components/forum-create-topic/forum-create-topic.component"
+            "./features/forum/components/forum-topic-form/forum-topic-form.component"
           ),
       },
       {
@@ -117,7 +117,7 @@ export const routes: Routes = [
         path: "forum/edit/:id",
         loadComponent: () =>
           import(
-            "./features/forum/components/forum-edit-topic/forum-edit-topic.component"
+            "./features/forum/components/forum-topic-form/forum-topic-form.component"
           ),
       },
     ],

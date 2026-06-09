@@ -1,10 +1,10 @@
-.create-topic-container {
+.topic-form-container {
   max-width: 600px;
   margin: 32px auto;
   padding: 0 16px;
 }
 
-.create-topic-card {
+.topic-form-card {
   background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
@@ -117,12 +117,12 @@
 }
 
 @media (max-width: 600px) {
-  .create-topic-container {
+  .topic-form-container {
     margin: 16px auto;
     padding: 0 8px;
   }
 
-  .create-topic-card {
+  .topic-form-card {
     padding: 16px;
   }
 

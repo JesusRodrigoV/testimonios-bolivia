@@ -41,8 +41,6 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
-  text-shadow: 0 1px 2px var(--shadow-md);
-  transition: color 0.3s ease;
 }
 
 .description {
@@ -55,7 +53,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.3s ease;
 }
 
 .media {
@@ -64,21 +61,10 @@
 
 .media-content {
   width: 100%;
+  max-height: 250px;
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow-md);
   transition: box-shadow 0.3s ease;
-
-  &.video,
-  &.audio {
-    max-height: 250px;
-  }
-
-  &.p {
-    padding: 12px;
-    background: color-mix(in srgb, var(--bg-card) 80%, transparent);
-    font-size: 1rem;
-    margin: 0;
-  }
 }
 
 .skeleton-media {
@@ -146,7 +132,6 @@
   width: 1.2rem;
   height: 1.2rem;
   color: var(--color-primary);
-  transition: color 0.3s ease;
 }
 
 .meta-item span {
@@ -181,8 +166,7 @@
     font-size: 0.9rem;
   }
 
-  .media-content.video,
-  .media-content.audio {
+  .media-content {
     max-height: 150px;
   }
 

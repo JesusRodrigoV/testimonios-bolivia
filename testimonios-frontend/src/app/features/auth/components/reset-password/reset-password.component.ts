@@ -14,8 +14,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
+import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NotificationService } from '@app/core/services/notification.service';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -27,9 +26,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     NgOptimizedImage,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
+    MatIconModule,
     MatProgressSpinnerModule,
     RouterLink,
   ],
@@ -46,7 +44,9 @@ export default class ResetPasswordComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected loading = signal(false);
+  protected error = signal<string | null>(null);
   protected hidePassword = true;
+  protected hideConfirmPassword = true;
   private token: string | null = null;
 
   protected resetPasswordForm: FormGroup = this.fb.group(
@@ -60,6 +60,7 @@ export default class ResetPasswordComponent implements OnInit {
   ngOnInit() {
     this.token = this.route.snapshot.queryParamMap.get("token");
     if (!this.token) {
+      this.error.set("Token inválido o expirado");
       this.notification.error("Token inválido o expirado");
       this.router.navigate(["/forgot-password"]);
     }
@@ -74,6 +75,7 @@ export default class ResetPasswordComponent implements OnInit {
   onSubmit() {
     if (this.resetPasswordForm.valid && this.token) {
       this.loading.set(true);
+      this.error.set(null);
       const newPassword = this.resetPasswordForm.get("password")?.value;
 
       this.authService
@@ -87,9 +89,9 @@ export default class ResetPasswordComponent implements OnInit {
             this.router.navigate(["/login"]);
           },
           error: (error) => {
-            this.notification.error(
-              error.message || "Error al restablecer la contraseña",
-            );
+            const message = error.error?.message || "Error al restablecer la contraseña";
+            this.error.set(message);
+            this.notification.error(message);
             this.loading.set(false);
           },
         });

@@ -1,9 +1,9 @@
 # --- Environment & Secrets ---
-.env
+# docker.env
+# .env
 .env.*
 .env.local
 .env.*.local
-docker.env
 *.pem
 *.key
 

@@ -46,6 +46,11 @@ html {
   --radius-lg: 16px;
   --radius-xl: 24px;
 
+  // Layout
+  --header-height: 64px;
+  --footer-height: 80px;
+  --sidenav-width: 240px;
+
   @include mat.theme(
     (
       color: mat.$azure-palette,
@@ -103,6 +108,11 @@ html.dark-mode {
   --radius-lg: 16px;
   --radius-xl: 24px;
 
+  // Layout
+  --header-height: 64px;
+  --footer-height: 80px;
+  --sidenav-width: 240px;
+
   @include mat.theme(
     (
       color: mat.$cyan-palette,
@@ -122,6 +132,47 @@ body {
   margin: 0;
   font-family: "Source Sans 3", Arial, sans-serif;
   box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.app-header {
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+}
+
+.app-footer {
+  flex-shrink: 0;
+  height: var(--footer-height);
+}
+
+mat-drawer-container {
+  flex: 1;
+  width: 100%;
+}
+
+mat-drawer {
+  width: auto;
+  background: none;
+}
+
+@media (max-width: 600px) {
+  mat-drawer {
+    width: 200px;
+  }
 }
 
 .manuscript-text {

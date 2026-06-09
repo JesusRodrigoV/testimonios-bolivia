@@ -13,7 +13,7 @@
         <app-sidenav />
       </mat-drawer>
       <mat-drawer-content>
-        <router-outlet /> 
+        <router-outlet (activate)="drawer.close()" />
       </mat-drawer-content>
     </mat-drawer-container>
   </main>

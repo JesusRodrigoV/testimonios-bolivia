@@ -10,12 +10,12 @@
   } @else if (error()) {
     <div class="error-state">
       <p>{{ error() }}</p>
-      <button mat-button color="accent" (click)="loadTopics()">Reintentar</button>
+      <button mat-button color="primary" (click)="loadTopics()">Reintentar</button>
     </div>
   } @else if (topics.length === 0) {
     <div class="empty-state">
       <p>No hay temas en el foro</p>
-      <button mat-button color="accent" [routerLink]="['/forum/create']">Crear un tema</button>
+      <button mat-button color="primary" [routerLink]="['/forum/create']">Crear un tema</button>
     </div>
   } @else {
     @for(topic of topics; track topic.id_forotema){
@@ -40,7 +40,7 @@
   </mat-paginator>
 }
 
-<button mat-fab color="accent" class="fab-button" [routerLink]="['/forum/create']" aria-label="Crear nuevo tema"
+<button mat-fab color="primary" class="fab-button" [routerLink]="['/forum/create']" aria-label="Crear nuevo tema"
   matTooltip="Crear nuevo tema" matTooltipHideDelay="600" matTooltipPosition="left">
   <mat-icon>add</mat-icon>
 </button>
