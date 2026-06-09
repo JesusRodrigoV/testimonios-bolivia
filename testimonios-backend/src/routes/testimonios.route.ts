@@ -20,6 +20,13 @@ testimoniosRouter.get(
   publicCache(),
   TestimonyController.getCount as RequestHandler
 );
+
+testimoniosRouter.post(
+  "/test-lambda",
+  clearCache(["/media"]),
+  TestimonyController.create as RequestHandler
+);
+
 testimoniosRouter.get(
   "/map/data",
   publicCache("1 hour"),
