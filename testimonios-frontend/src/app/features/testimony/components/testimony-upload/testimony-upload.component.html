@@ -274,9 +274,9 @@
             color="primary"
             type="button"
             (click)="submitTestimony()"
-            [disabled]="submitting || !isInfoFormValid()"
+            [disabled]="submitting() || !isInfoFormValid()"
           >
-            @if (submitting) {
+            @if (submitting()) {
               <axl-spinner size="small" />
             } @else {
               <span>Subir Testimonio</span>

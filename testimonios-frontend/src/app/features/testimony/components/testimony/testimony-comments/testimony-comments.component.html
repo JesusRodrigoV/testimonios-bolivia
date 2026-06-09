@@ -13,18 +13,18 @@
   ></app-comment-form>
   <app-comment-list
     [comments]="comments"
-    [isLoading]="isLoading"
+    [isLoading]="isLoading()"
     [testimonyId]="testimonyId()"
     (commentsUpdated)="onCommentsUpdated()"
   ></app-comment-list>
-  @if (hasMorePages && !isLoading && !isLoadingMore) {
+  @if (hasMorePages && !isLoading() && !isLoadingMore()) {
   <div class="load-more">
     <button mat-button color="primary" (click)="loadMore()">
       Cargar más comentarios
     </button>
   </div>
   }
-  @if (isLoadingMore) {
+  @if (isLoadingMore()) {
   <div class="loading-more">
     <p>Cargando más comentarios...</p>
   </div>

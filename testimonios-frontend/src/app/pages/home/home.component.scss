@@ -42,7 +42,7 @@
 // --- Carousel ---
 .carousel {
   width: 100%;
-  padding: 0 2.5rem;
+  padding: 0 1rem;
   --swiper-navigation-color: var(--color-primary);
   --swiper-pagination-color: var(--color-primary);
   --swiper-navigation-size: 24px;
@@ -63,6 +63,14 @@
 }
 
 // Navigation
+:host ::ng-deep swiper-container .swiper-button-prev {
+  left: -8px;
+}
+
+:host ::ng-deep swiper-container .swiper-button-next {
+  right: -8px;
+}
+
 :host ::ng-deep swiper-container .swiper-button-prev,
 :host ::ng-deep swiper-container .swiper-button-next {
   background: var(--bg-card);

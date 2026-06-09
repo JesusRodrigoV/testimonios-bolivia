@@ -11,8 +11,12 @@ if (!config.jwtSecret) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginOpenerPolicy: false,
+}));
 
 app.use(cors({
   origin: config.frontendUrl,
@@ -62,3 +66,23 @@ app.use(
 app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`);
 });
+
+const dbUrl = process.env.DATABASE_URL || "";
+
+console.log("============ [DIAGNÓSTICO DE CONEXIÓN] ============");
+console.log("¿DATABASE_URL existe en el contenedor?:", !!dbUrl);
+console.log("Longitud total de la cadena:", dbUrl.length);
+
+if (dbUrl) {
+  console.log("¿La URL termina correctamente con los parámetros?:", dbUrl.endsWith("connection_limit=5"));
+
+  const parts = dbUrl.split("@");
+  if (parts.length > 1) {
+    console.log("Host detectado por el contenedor:", parts[1]);
+  } else {
+    console.log("¡ALERTA!: No se detectó el separador '@' en la URL. El formato está mal armado.");
+  }
+
+  console.log("Inicio de la URL:", dbUrl.substring(0, 25));
+}
+console.log("====================================================");

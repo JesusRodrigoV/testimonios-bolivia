@@ -1,7 +1,6 @@
 import { NgClass, TitleCasePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
@@ -32,7 +31,7 @@ import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-d
 export class TestimonyManagementComponent implements OnInit {
   readonly StatusEnum = StatusEnum;
   testimonies: Testimony[] = [];
-  isLoading = false;
+  isLoading = signal(false);
   selectedStatus = signal<string>('');
   page = signal(1);
   limit = 10;
@@ -44,7 +43,6 @@ export class TestimonyManagementComponent implements OnInit {
   private testimonioService = inject(TestimonioService);
   private dialog = inject(MatDialog);
   private notification = inject(NotificationService);
-  private ref = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
 
@@ -72,7 +70,7 @@ export class TestimonyManagementComponent implements OnInit {
   }
 
   loadTestimonies(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const params: { status?: string; limit: number; page: number } = {
       limit: this.limit,
       page: this.page(),
@@ -86,13 +84,13 @@ export class TestimonyManagementComponent implements OnInit {
         this.total.set(response.pagination.total);
         this.hasMore.set(response.pagination.hasMore);
         this.cursor.set(response.pagination.cursor);
-        this.isLoading = false;
-        this.ref.markForCheck();
+        this.isLoading.set(false);
+        
       },
       error: () => {
         this.notification.error("Error al cargar testimonios");
-        this.isLoading = false;
-        this.ref.markForCheck();
+        this.isLoading.set(false);
+        
       },
     });
   }
@@ -148,7 +146,7 @@ export class TestimonyManagementComponent implements OnInit {
 
     dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (!result) return;
-      this.isLoading = true;
+      this.isLoading.set(true);
       this.testimonioService
         .validateTestimony(id, approve)
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -158,13 +156,13 @@ export class TestimonyManagementComponent implements OnInit {
             this.notification.success(
               `Testimonio ${approve ? "aprobado" : "rechazado"} con éxito`,
             );
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
           error: () => {
             this.notification.error("Error al validar testimonio");
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
         });
     });
@@ -181,7 +179,7 @@ export class TestimonyManagementComponent implements OnInit {
 
     dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (!result) return;
-      this.isLoading = true;
+      this.isLoading.set(true);
       this.testimonioService
         .deleteTestimony(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -189,13 +187,13 @@ export class TestimonyManagementComponent implements OnInit {
           next: () => {
             this.loadTestimonies();
             this.notification.success("Testimonio eliminado con éxito");
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
           error: () => {
             this.notification.error("Error al eliminar testimonio");
-            this.isLoading = false;
-            this.ref.markForCheck();
+            this.isLoading.set(false);
+            
           },
         });
     });

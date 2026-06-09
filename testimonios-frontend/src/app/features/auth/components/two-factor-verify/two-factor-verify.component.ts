@@ -10,6 +10,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { RouterLink } from "@angular/router";
 import { AuthStore } from "@app/auth.store";
 
 @Component({
@@ -21,6 +22,7 @@ import { AuthStore } from "@app/auth.store";
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    RouterLink,
   ],
   templateUrl: "./two-factor-verify.component.html",
   styleUrl: "../../auth.styles.scss",

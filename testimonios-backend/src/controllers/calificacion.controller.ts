@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { parse, ValiError } from "valibot";
-import { CalificacionModel, updateCalificacionSchema } from '../models/calificacion.model';
+import { CalificacionModel, createCalificacionSchema, updateCalificacionSchema } from '../models/calificacion.model';
 import { Rol } from '@app/middleware/authorization';
 
 export class CalificacionController {
@@ -12,7 +12,7 @@ export class CalificacionController {
             console.error('Error en getAll:', error);
             return res.status(500).json({
                 error: 'Error al obtener las calificaciones',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }
@@ -32,7 +32,7 @@ export class CalificacionController {
             console.error('Error en getById:', error);
             return res.status(500).json({
                 error: 'Error al obtener la calificación',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }
@@ -43,20 +43,7 @@ export class CalificacionController {
                 return res.status(401).json({ error: 'Usuario no autenticado' });
             }
 
-            const { puntuacion, fecha, id_testimonio } = req.body;
-
-            if (!puntuacion || !fecha || !id_testimonio) {
-                return res.status(400).json({
-                    error: 'Faltan campos requeridos',
-                    required: ['puntuacion', 'fecha', 'id_testimonio']
-                });
-            }
-
-            if (puntuacion < 1 || puntuacion > 5) {
-                return res.status(400).json({
-                    error: 'La puntuación debe estar entre 1 y 5'
-                });
-            }
+            const { puntuacion, fecha, id_testimonio } = parse(createCalificacionSchema, req.body);
 
             const calificacion = await CalificacionModel.create({
                 puntuacion,
@@ -66,14 +53,14 @@ export class CalificacionController {
             });
             res.status(201).json(calificacion);
         } catch (error) {
+            if (error instanceof ValiError) {
+                return res.status(400).json({ error: error.issues.map(i => i.message).join("; ") });
+            }
             console.error('Error en create:', error);
             if (error instanceof Error && error.message === 'El usuario ya ha calificado este testimonio') {
-                return res.status(400).json({ error: error.message });
+                return res.status(400).json({ error: 'El usuario ya ha calificado este testimonio' });
             }
-            return res.status(500).json({
-                error: 'Error al crear la calificación',
-                details: error instanceof Error ? error.message : 'Error desconocido'
-            });
+            return res.status(500).json({ error: 'Error al crear la calificación' });
         }
     }
 
@@ -110,7 +97,7 @@ export class CalificacionController {
             console.error('Error en update:', error);
             return res.status(500).json({
                 error: 'Error al actualizar la calificación',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }
@@ -140,7 +127,7 @@ export class CalificacionController {
             console.error('Error en delete:', error);
             return res.status(500).json({
                 error: 'Error al eliminar la calificación',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }
@@ -163,7 +150,7 @@ export class CalificacionController {
             console.error('Error en getUserRating:', error);
             return res.status(500).json({
                 error: 'Error al obtener la calificación del usuario',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }
@@ -175,7 +162,7 @@ export class CalificacionController {
 
             res.json(await CalificacionModel.getTopRatedTestimonies(limit));
         } catch (error) {
-            return res.status(500).json({ error: "Error al obtener testimonios destacados", details: (error as Error).message });
+            return res.status(500).json({ error: "Error al obtener testimonios destacados"});
         }
     }
 
@@ -191,7 +178,7 @@ export class CalificacionController {
             console.error('Error en getTestimonyRatingStats:', error);
             return res.status(500).json({
                 error: 'Error al obtener estadísticas de calificación',
-                details: error instanceof Error ? error.message : 'Error desconocido'
+
             });
         }
     }

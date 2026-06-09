@@ -1,9 +1,11 @@
+import { NgOptimizedImage } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
 import {
   FormBuilder,
@@ -16,18 +18,20 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NotificationService } from '@app/core/services/notification.service';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthService } from "@app/features/auth/services/auth";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: "app-reset-password",
   imports: [
+    NgOptimizedImage,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    RouterLink,
   ],
   templateUrl: "./reset-password.component.html",
   styleUrl: "../../auth.styles.scss",
@@ -41,7 +45,7 @@ export default class ResetPasswordComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  protected loading = false;
+  protected loading = signal(false);
   protected hidePassword = true;
   private token: string | null = null;
 
@@ -69,7 +73,7 @@ export default class ResetPasswordComponent implements OnInit {
 
   onSubmit() {
     if (this.resetPasswordForm.valid && this.token) {
-      this.loading = true;
+      this.loading.set(true);
       const newPassword = this.resetPasswordForm.get("password")?.value;
 
       this.authService
@@ -86,7 +90,7 @@ export default class ResetPasswordComponent implements OnInit {
             this.notification.error(
               error.message || "Error al restablecer la contraseña",
             );
-            this.loading = false;
+            this.loading.set(false);
           },
         });
     }

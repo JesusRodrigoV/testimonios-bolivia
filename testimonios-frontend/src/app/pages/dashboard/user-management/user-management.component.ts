@@ -1,11 +1,11 @@
 import { NgClass, NgOptimizedImage } from "@angular/common";
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { NotificationService } from '@app/core/services/notification.service';
@@ -26,12 +26,11 @@ import { SpinnerComponent } from "@app/features/shared/ui/spinner";
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  isLoading = false;
+  isLoading = signal(false);
 
   private adminService = inject(AdminService);
   private dialog = inject(MatDialog);
   private notification = inject(NotificationService);
-  private ref = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
@@ -49,20 +48,18 @@ export class UserManagementComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.adminService.getUsers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (users) => {
         this.users = users.map((u) => ({
           ...u,
           id: u.id_usuario,
         }));
-        this.isLoading = false;
-        this.ref.detectChanges();
+        this.isLoading.set(false);
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.notification.error("Error al cargar usuarios");
-        this.ref.detectChanges();
       },
     });
   }
@@ -127,7 +124,7 @@ export class UserManagementComponent implements OnInit {
 
     dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
       if (!result) return;
-      this.isLoading = true;
+      this.isLoading.set(true);
 
       this.adminService
         .deleteUser(id)
@@ -136,15 +133,13 @@ export class UserManagementComponent implements OnInit {
           next: () => {
             this.loadUsers();
             this.notification.success("Usuario eliminado con éxito");
-            this.isLoading = false;
-            this.ref.detectChanges();
+            this.isLoading.set(false);
           },
           error: (error) => {
             this.notification.error(
               error.error?.message || "Error al eliminar usuario",
             );
-            this.isLoading = false;
-            this.ref.detectChanges();
+            this.isLoading.set(false);
           },
         });
     });

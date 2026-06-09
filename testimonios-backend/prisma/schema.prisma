@@ -17,12 +17,14 @@ model calificaciones {
   is_active       Boolean     @default(true)
   testimonios     testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "calificaciones_testimonios")
   usuarios        usuarios    @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "calificaciones_usuario")
+
+  @@unique([id_usuario, id_testimonio], map: "calificaciones_usuario_testimonio_uniq")
 }
 
 model categorias {
   id_categoria           Int                      @id(map: "categorias_pk") @default(autoincrement())
-  nombre                 String                   @db.VarChar(50)
-  descripcion            String
+  nombre                 String                   @db.VarChar(50)          @unique(map: "categorias_nombre_uniq")
+  descripcion            String?
   is_active              Boolean                  @default(true)
   testimonios_categorias testimonios_categorias[]
 }
@@ -30,7 +32,7 @@ model categorias {
 model colecciones {
   id_coleccion            Int                       @id(map: "colecciones_pk") @default(autoincrement())
   titulo                  String                    @db.VarChar(150)
-  descripcion             String
+  descripcion             String?
   fecha_creacion          DateTime                  @default(now()) @db.Timestamptz(6)
   id_usuario              Int
   is_active               Boolean                   @default(true)
@@ -42,8 +44,8 @@ model colecciones_testimonios {
   id_coleccion   Int
   id_testimonio  Int
   fecha_agregado DateTime    @default(now()) @db.Timestamptz(6)
-  colecciones    colecciones @relation(fields: [id_coleccion], references: [id_coleccion], onDelete: NoAction, onUpdate: NoAction, map: "table_59_colecciones")
-  testimonios    testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "table_59_testimonios")
+  colecciones    colecciones @relation(fields: [id_coleccion], references: [id_coleccion], onDelete: NoAction, onUpdate: NoAction, map: "ct_colecciones")
+  testimonios    testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "ct_testimonios")
 
   @@id([id_coleccion, id_testimonio], map: "colecciones_testimonios_pk")
 }
@@ -51,7 +53,7 @@ model colecciones_testimonios {
 model comentarios {
   id_comentario         Int                 @id(map: "comentarios_pk") @default(autoincrement())
   contenido             String
-  id_estado             Int
+  id_estado             Int                 @default(1)
   fecha_creacion        DateTime            @default(now()) @db.Timestamptz(6)
   creado_por_id_usuario Int
   id_testimonio         Int
@@ -86,7 +88,7 @@ model estado {
 
 model etiquetas {
   id_etiquetas          Int                     @id(map: "etiquetas_pk") @default(autoincrement())
-  nombre                String                  @db.VarChar(50)
+  nombre                String                  @db.VarChar(50)          @unique(map: "etiquetas_nombre_uniq")
   is_active             Boolean                 @default(true)
   testimonios_etiquetas testimonios_etiquetas[]
 }
@@ -154,7 +156,7 @@ model logs {
 
 model medio {
   id_medio    Int           @id(map: "medio_pk") @default(autoincrement())
-  nombre      String        @db.VarChar(50)
+  nombre      String        @db.VarChar(50)      @unique(map: "medio_nombre_uniq")
   is_active   Boolean       @default(true)
   testimonios testimonios[]
 }
@@ -174,13 +176,13 @@ model notificaciones {
   estado          estado?            @relation(fields: [id_estado], references: [id_estado], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_estado")
   testimonios     testimonios?       @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_testimonios")
   usuarios        usuarios           @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_usuario")
-  forotema        foro_temas?        @relation(fields: [id_forotema], references: [id_forotema], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_forotema")
-  forocoment      foro_comentarios?  @relation(fields: [id_forocoment], references: [id_forocoment], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_forocoment")
+  foro_temas      foro_temas?        @relation(fields: [id_forotema], references: [id_forotema], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_forotema")
+  foro_comentarios foro_comentarios? @relation(fields: [id_forocoment], references: [id_forocoment], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_forocoment")
   remitente       usuarios?          @relation("notificaciones_remitente", fields: [id_remitente], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "notificaciones_remitente")
 }
 
 model permisos {
-  id_permiso      Int         @id(map: "permisos_pk")
+  id_permiso      Int         @id(map: "permisos_pk") @default(autoincrement())
   permiso         String      @db.VarChar(10)
   fecha_concesion DateTime    @default(now()) @db.Timestamptz(6)
   is_active       Boolean     @default(true)
@@ -210,8 +212,8 @@ model rol {
 
 model solicitudes_acceso {
   id_solicitud                                         Int         @id(map: "solicitudes_acceso_pk") @default(autoincrement())
-  fecha_solicitud                                      DateTime    @db.Timestamptz(6)
-  fecha_resolucion                                     DateTime    @db.Timestamptz(6)
+  fecha_solicitud                                      DateTime    @default(now()) @db.Timestamptz(6)
+  fecha_resolucion                                     DateTime?   @db.Timestamptz(6)
   is_active                                            Boolean     @default(true)
   id_testimonio                                        Int
   id_estado                                            Int
@@ -219,55 +221,55 @@ model solicitudes_acceso {
   procesado_por                                        Int
   estado                                               estado      @relation(fields: [id_estado], references: [id_estado], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_estado")
   testimonios                                          testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_testimonios")
-  usuarios_solicitudes_acceso_procesado_porTousuarios  usuarios    @relation("solicitudes_acceso_procesado_porTousuarios", fields: [procesado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_usuario_procesado_por")
-  usuarios_solicitudes_acceso_solicitado_porTousuarios usuarios    @relation("solicitudes_acceso_solicitado_porTousuarios", fields: [solicitado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_usuario_solicitado_por")
+  usuarios_solicitudes_acceso_procesado_por  usuarios  @relation("solicitudes_acceso_procesado_por", fields: [procesado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_usuario_procesado_por")
+  usuarios_solicitudes_acceso_solicitado_por usuarios  @relation("solicitudes_acceso_solicitado_por", fields: [solicitado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "solicitudes_acceso_usuario_solicitado_por")
 }
 
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model testimonios {
-  id_testimonio                                 Int                       @id(map: "testimonios_pk") @default(autoincrement())
-  titulo                                        String                    @db.VarChar(255)
-  descripcion                                   String
-  contenido_texto                               String
-  url_medio                                     String                    @db.VarChar(255)
-  fecha_validacion                              DateTime                  @db.Timestamptz(6)
-  latitud                                       Decimal?                  @db.Decimal(10, 8)
-  longitud                                      Decimal?                  @db.Decimal(10, 8)
-  duracion                                      Int
-  created_at                                    DateTime                  @default(now()) @db.Timestamptz(6)
-  updated_at                                    DateTime                  @default(now()) @db.Timestamptz(6)
-  id_estado                                     Int
-  id_medio                                      Int
-  verificado_por                                Int
-  subido_por                                    Int
-  is_active                                     Boolean                   @default(true)
-  calificaciones                                calificaciones[]
-  colecciones_testimonios                       colecciones_testimonios[]
-  comentarios                                   comentarios[]
-  foro_temas                                    foro_temas[]              @relation("foro_temas_testimonios")
-  historial_testimonios                         historial_testimonios[]
-  notificaciones                                notificaciones[]
-  permisos                                      permisos[]
-  solicitudes_acceso                            solicitudes_acceso[]
-  estado                                        estado                    @relation(fields: [id_estado], references: [id_estado], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_estado")
-  medio                                         medio                     @relation(fields: [id_medio], references: [id_medio], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_medio")
-  usuarios_testimonios_subido_porTousuarios     usuarios                  @relation("testimonios_subido_porTousuarios", fields: [subido_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_usuario_subido_por")
-  usuarios_testimonios_verificado_porTousuarios usuarios                  @relation("testimonios_verificado_porTousuarios", fields: [verificado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_usuario_verificado_por")
-  testimonios_categorias                        testimonios_categorias[]
-  testimonios_etiquetas                         testimonios_etiquetas[]
-  testimonios_eventos                           testimonios_eventos[]
-  transcripciones                               transcripciones[]
+  id_testimonio                    Int                       @id(map: "testimonios_pk") @default(autoincrement())
+  titulo                           String                    @db.VarChar(255)
+  descripcion                      String
+  contenido_texto                  String
+  url_medio                        String                    @db.VarChar(255)
+  fecha_validacion                 DateTime?                 @db.Timestamptz(6)
+  latitud                          Decimal?                  @db.Decimal(10, 8)
+  longitud                         Decimal?                  @db.Decimal(10, 8)
+  duracion                         Int?
+  created_at                       DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                       DateTime                  @default(now()) @updatedAt @db.Timestamptz(6)
+  id_estado                        Int
+  id_medio                         Int
+  verificado_por                   Int
+  subido_por                       Int
+  is_active                        Boolean                   @default(true)
+  calificaciones                   calificaciones[]
+  colecciones_testimonios          colecciones_testimonios[]
+  comentarios                      comentarios[]
+  foro_temas                       foro_temas[]              @relation("foro_temas_testimonios")
+  historial_testimonios            historial_testimonios[]
+  notificaciones                   notificaciones[]
+  permisos                         permisos[]
+  solicitudes_acceso               solicitudes_acceso[]
+  estado                           estado                    @relation(fields: [id_estado], references: [id_estado], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_estado")
+  medio                            medio                     @relation(fields: [id_medio], references: [id_medio], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_medio")
+  usuario_subido_por               usuarios                  @relation("testimonios_subido_por", fields: [subido_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_usuario_subido_por")
+  usuario_verificado_por           usuarios                  @relation("testimonios_verificado_por", fields: [verificado_por], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "testimonios_usuario_verificado_por")
+  testimonios_categorias           testimonios_categorias[]
+  testimonios_etiquetas            testimonios_etiquetas[]
+  testimonios_eventos              testimonios_eventos[]
+  transcripciones                  transcripciones[]
 
   @@index([id_estado], map: "idx_testimonios_estado")
   @@index([subido_por], map: "idx_testimonios_subido_por")
   @@index([id_medio], map: "idx_testimonios_medio")
+  @@index([verificado_por], map: "idx_testimonios_verificado_por")
 }
 
 model testimonios_categorias {
   id_categoria  Int
   id_testimonio Int
-  categorias    categorias  @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "table_56_categorias")
-  testimonios   testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "table_56_testimonios")
+  categorias    categorias  @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "tc_categorias")
+  testimonios   testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "tc_testimonios")
 
   @@id([id_categoria, id_testimonio], map: "testimonios_categorias_pk")
 }
@@ -275,8 +277,8 @@ model testimonios_categorias {
 model testimonios_etiquetas {
   id_etiquetas  Int
   id_testimonio Int
-  etiquetas     etiquetas   @relation(fields: [id_etiquetas], references: [id_etiquetas], onDelete: NoAction, onUpdate: NoAction, map: "table_57_etiquetas")
-  testimonios   testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "table_57_testimonios")
+  etiquetas     etiquetas   @relation(fields: [id_etiquetas], references: [id_etiquetas], onDelete: NoAction, onUpdate: NoAction, map: "te_etiquetas")
+  testimonios   testimonios @relation(fields: [id_testimonio], references: [id_testimonio], onDelete: NoAction, onUpdate: NoAction, map: "te_testimonios")
 
   @@id([id_etiquetas, id_testimonio], map: "testimonios_etiquetas_pk")
 }
@@ -303,40 +305,38 @@ model transcripciones {
 }
 
 model usuarios {
-  id_usuario                                                     Int                     @id(map: "usuario_pk") @default(autoincrement())
-  nombre                                                         String                  @db.VarChar(20)
-  email                                                          String                  @db.VarChar(50)
-  password                                                       String                  @db.VarChar(255)
-  biografia                                                      String
-  two_factor_secret                                              String                  @db.VarChar(255)
-  last_login                                                     DateTime                @db.Timestamptz(6)
-  created_at                                                     DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at                                                     DateTime                @default(now()) @db.Timestamptz(6)
-  id_rol                                                         Int
-  is_active                                                      Boolean                 @default(true)
-  two_factor_enabled                                             Boolean?
-  password_reset_token                                           String?                 @db.VarChar(255)
-  password_reset_expires                                         DateTime?               @db.Timestamptz(6)
-  profile_image                                                  String?                 @db.VarChar(255)
-  calificaciones                                                 calificaciones[]
-  colecciones                                                    colecciones[]
-  comentarios                                                    comentarios[]
-  foro_comentarios                                               foro_comentarios[]      @relation("foro_comentarios_usuario")
-  foro_temas                                                     foro_temas[]            @relation("foro_temas_usuario")
-  historial_testimonios                                          historial_testimonios[]
-  likes_comentarios                                              likes_comentarios[]
-  logs                                                           logs[]
-  notificaciones                                                 notificaciones[]
-  notificaciones_remitente                                       notificaciones[]      @relation("notificaciones_remitente")
-  refresh_tokens                                                 refresh_tokens[]
-  solicitudes_acceso_solicitudes_acceso_procesado_porTousuarios  solicitudes_acceso[]    @relation("solicitudes_acceso_procesado_porTousuarios")
-  solicitudes_acceso_solicitudes_acceso_solicitado_porTousuarios solicitudes_acceso[]    @relation("solicitudes_acceso_solicitado_porTousuarios")
-  testimonios_testimonios_subido_porTousuarios                   testimonios[]           @relation("testimonios_subido_porTousuarios")
-  testimonios_testimonios_verificado_porTousuarios               testimonios[]           @relation("testimonios_verificado_porTousuarios")
-  transcripciones                                                transcripciones[]
-  rol                                                            rol                     @relation(fields: [id_rol], references: [id_rol], onDelete: NoAction, onUpdate: NoAction, map: "usuario_rol")
+  id_usuario          Int                    @id(map: "usuario_pk") @default(autoincrement())
+  nombre              String                 @db.VarChar(20)
+  email               String                 @db.VarChar(50)      @unique(map: "usuarios_email_uniq")
+  password            String                 @db.VarChar(255)
+  biografia           String?
+  two_factor_secret   String?                @db.VarChar(255)
+  last_login          DateTime?              @db.Timestamptz(6)
+  created_at          DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+  id_rol              Int
+  is_active           Boolean                @default(true)
+  two_factor_enabled  Boolean?
+  password_reset_token String?               @db.VarChar(255)
+  password_reset_expires DateTime?           @db.Timestamptz(6)
+  profile_image       String?                @db.VarChar(255)
+  calificaciones      calificaciones[]
+  colecciones         colecciones[]
+  comentarios         comentarios[]
+  foro_comentarios    foro_comentarios[]     @relation("foro_comentarios_usuario")
+  foro_temas          foro_temas[]           @relation("foro_temas_usuario")
+  historial_testimonios historial_testimonios[]
+  likes_comentarios   likes_comentarios[]
+  logs                logs[]
+  notificaciones      notificaciones[]
+  notificaciones_remitente notificaciones[]  @relation("notificaciones_remitente")
+  refresh_tokens      refresh_tokens[]
+  solicitudes_procesado_por  solicitudes_acceso[] @relation("solicitudes_acceso_procesado_por")
+  solicitudes_solicitado_por solicitudes_acceso[] @relation("solicitudes_acceso_solicitado_por")
+  testimonios_subido_por     testimonios[]        @relation("testimonios_subido_por")
+  testimonios_verificado_por testimonios[]        @relation("testimonios_verificado_por")
+  transcripciones    transcripciones[]
+  rol                rol                    @relation(fields: [id_rol], references: [id_rol], onDelete: NoAction, onUpdate: NoAction, map: "usuario_rol")
 
-  @@index([email], map: "idx_usuarios_email")
   @@index([id_rol], map: "idx_usuarios_rol")
 }
-

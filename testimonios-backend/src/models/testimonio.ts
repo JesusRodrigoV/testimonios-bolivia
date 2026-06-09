@@ -68,7 +68,7 @@ export type TestimonyWithRelations = Prisma.testimoniosGetPayload<{
     created_at: true;
     estado: { select: { nombre: true } };
     medio: { select: { nombre: true } };
-    usuarios_testimonios_subido_porTousuarios: { select: { nombre: true } };
+    usuario_subido_por: { select: { nombre: true } };
     testimonios_categorias?: {
       select: {
         id_testimonio: true;

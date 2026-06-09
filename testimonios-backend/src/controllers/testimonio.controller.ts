@@ -2,6 +2,9 @@ import type { Request, Response } from "express";
 import { testimonyService, type SearchParams } from "@app/services/testimonio.service";
 import { parse, partial, ValiError } from "valibot";
 import { inputTestimonySchema } from "@app/models/testimonio";
+import { S3Service } from '@app/lib/S3Service';
+
+const s3Service = new S3Service();
 
 export class TestimonyController {
   static async create(req: Request, res: Response) {
@@ -29,7 +32,6 @@ export class TestimonyController {
       }
       return res.status(500).json({
         error: "Error al crear el testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }
@@ -53,7 +55,6 @@ export class TestimonyController {
       console.error("Error en getById:", error);
       return res.status(500).json({
         error: "Error al obtener el testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }
@@ -66,7 +67,6 @@ export class TestimonyController {
       console.error("Error en getCount:", error);
       return res.status(500).json({
         error: "Error al obtener el conteo de testimonios",
-        details: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }
@@ -84,7 +84,6 @@ export class TestimonyController {
       console.error("Error en getByUserId:", error);
       return res.status(500).json({
         error: "Error al obtener los testimonios del usuario",
-        details: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }
@@ -103,7 +102,6 @@ export class TestimonyController {
       console.error("Error en getCountByUserId:", error);
       return res.status(500).json({
         error: "Error al obtener los testimonios del usuario",
-        details: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }
@@ -150,7 +148,7 @@ export class TestimonyController {
       console.error("Error en search:", error);
       return res.status(500).json({
         error: "Error al buscar testimonios",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -175,7 +173,7 @@ export class TestimonyController {
       console.error("Error en validate:", error);
       return res.status(500).json({
         error: "Error al validar el testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -192,7 +190,7 @@ export class TestimonyController {
       console.error("Error en getVersions:", error);
       return res.status(500).json({
         error: "Error al obtener las versiones del testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -205,7 +203,7 @@ export class TestimonyController {
       console.error("Error en getMapData:", error);
       return res.status(500).json({
         error: "Error al obtener datos del mapa",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -242,7 +240,7 @@ export class TestimonyController {
       }
       return res.status(500).json({
         error: "Error al actualizar el testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -266,7 +264,7 @@ export class TestimonyController {
       console.error("Error en delete:", error);
       return res.status(500).json({
         error: "Error al eliminar el testimonio",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -283,7 +281,7 @@ export class TestimonyController {
       console.error("Error en download:", error);
       return res.status(500).json({
         error: "Error al obtener la URL de descarga",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -296,7 +294,7 @@ export class TestimonyController {
       console.error("Error en getAllCategories:", error);
       return res.status(500).json({
         error: "Error al obtener las categorías",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -309,7 +307,7 @@ export class TestimonyController {
       console.error("Error en getAllMediaTypes:", error);
       return res.status(500).json({
         error: "Error al obtener los tipos de medios",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
@@ -322,8 +320,31 @@ export class TestimonyController {
       console.error("Error en getAllStatuses:", error);
       return res.status(500).json({
         error: "Error al obtener los estados",
-        details: error instanceof Error ? error.message : "Error desconocido",
+
       });
     }
   }
+
+  //
+  static obtenerPresignedUrl = async (req: Request, res: Response) => {
+    try {
+      const { fileName, mimeType } = req.body;
+
+      if (!fileName || !mimeType) {
+        res.status(400).json({ message: "Faltan metadatos del archivo (fileName, mimeType)" });
+        return;
+      }
+
+      const data = await s3Service.generarUrlSubida(fileName, mimeType);
+      
+      res.status(200).json({
+        success: true,
+        uploadUrl: data.uploadUrl,
+        fileKey: data.key
+      });
+    } catch (error) {
+      console.error("Error en obtenerPresignedUrl:", error);
+      res.status(500).json({ message: "Error al generar la URL de subida" });
+    }
+  };
 }

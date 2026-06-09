@@ -26,7 +26,7 @@
       <div class="post-header">
         <div class="avatar">
           @if (forumPost.usuarios?.profile_image) {
-            <img [ngSrc]="forumPost.usuarios!.profile_image!" alt="Avatar" width="48" height="48" />
+            <img [ngSrc]="forumPost.usuarios!.profile_image!" alt="Avatar de {{ forumPost.usuarios!.nombre }}" width="48" height="48" />
           } @else {
             <mat-icon>person</mat-icon>
           }

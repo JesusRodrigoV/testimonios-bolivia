@@ -1,7 +1,7 @@
 import { maxLength, minLength, object, optional, pipe, string } from "valibot";
 import prisma from "@app/lib/prisma";
 
-const categoriaNombreSchema = pipe(string(), minLength(1, "El nombre es requerido"), maxLength(100, "El nombre no debe exceder 100 caracteres"));
+const categoriaNombreSchema = pipe(string(), minLength(1, "El nombre es requerido"), maxLength(50, "El nombre no debe exceder 50 caracteres"));
 const categoriaDescripcionSchema = optional(pipe(string(), maxLength(500, "La descripción no debe exceder 500 caracteres")));
 
 export const createCategoriaSchema = object({
@@ -11,7 +11,7 @@ export const createCategoriaSchema = object({
 
 export const updateCategoriaSchema = object({
   nombre: optional(categoriaNombreSchema),
-  descripcion: categoriaDescripcionSchema,
+  descripcion: optional(categoriaDescripcionSchema),
 });
 
 export class CategoriaModel {

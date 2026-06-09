@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { CommentService } from '@app/features/testimony/services';
 import { TestimonioService } from '@app/features/testimony/services';
 import { Comment } from '@app/features/testimony/models/comment.model';
@@ -23,7 +23,7 @@ import { NotificationService } from '@app/core/services/notification.service';
 })
 export class CommentManagementComponent implements OnInit {
   comments: Comment[] = [];
-  isLoading = false;
+  isLoading = signal(false);
   selectedStatus = signal<string>('');
   page = signal(1);
   limit = 10;
@@ -31,7 +31,6 @@ export class CommentManagementComponent implements OnInit {
   totalPages = signal(1);
   readonly Math = Math;
 
-  private ref = inject(ChangeDetectorRef);
   private dialog = inject(MatDialog);
   private commentService = inject(CommentService);
   private testimonyService = inject(TestimonioService);
@@ -56,7 +55,7 @@ export class CommentManagementComponent implements OnInit {
   }
 
   loadComments() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const p = this.page();
     this.commentService.getComments(p, this.limit).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
@@ -65,8 +64,7 @@ export class CommentManagementComponent implements OnInit {
         );
         this.total.set(response.meta.total);
         this.totalPages.set(response.meta.totalPages);
-        this.isLoading = false;
-        this.ref.markForCheck();
+        this.isLoading.set(false);
       },
       error: (err) => {
         this.notification.error(
@@ -74,8 +72,7 @@ export class CommentManagementComponent implements OnInit {
             ? 'No tienes permiso para ver los comentarios'
             : 'Error al cargar los comentarios'
         );
-        this.isLoading = false;
-        this.ref.markForCheck();
+        this.isLoading.set(false);
       },
     });
   }

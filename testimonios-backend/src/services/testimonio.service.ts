@@ -101,12 +101,12 @@ export const testimonyService = {
             id_medio: mediaTypeId,
           },
         },
-        usuarios_testimonios_subido_porTousuarios: {
+        usuario_subido_por: {
           connect: {
             id_usuario: userId,
           },
         },
-        usuarios_testimonios_verificado_porTousuarios: {
+        usuario_verificado_por: {
           connect: {
             id_usuario: userId,
           },
@@ -118,8 +118,8 @@ export const testimonyService = {
       include: {
         estado: true,
         medio: true,
-        usuarios_testimonios_subido_porTousuarios: true,
-        usuarios_testimonios_verificado_porTousuarios: true,
+        usuario_subido_por: true,
+        usuario_verificado_por: true,
       },
     });
 
@@ -226,7 +226,7 @@ export const testimonyService = {
         testimonios_eventos: {
           include: { eventos_historicos: { select: { nombre: true } } },
         },
-        usuarios_testimonios_subido_porTousuarios: { select: { nombre: true } },
+        usuario_subido_por: { select: { nombre: true } },
       },
     });
 
@@ -293,7 +293,7 @@ export const testimonyService = {
       updatedAt: testimony.updated_at,
       status: testimony.estado.nombre,
       format: testimony.medio.nombre,
-      author: testimony.usuarios_testimonios_subido_porTousuarios.nombre,
+      author: testimony.usuario_subido_por.nombre,
       categories: testimony.testimonios_categorias.map(
         (tc) => tc.categorias.nombre
       ),
@@ -454,7 +454,7 @@ export const testimonyService = {
       created_at: true,
       estado: { select: { nombre: true } },
       medio: { select: { nombre: true } },
-      usuarios_testimonios_subido_porTousuarios: { select: { nombre: true } },
+      usuario_subido_por: { select: { nombre: true } },
       testimonios_categorias: { 
         select: {
           id_testimonio: true,
@@ -493,7 +493,7 @@ export const testimonyService = {
     createdAt: t.created_at,
     status: t.estado.nombre,
     format: t.medio.nombre,
-    author: t.usuarios_testimonios_subido_porTousuarios.nombre,
+    author: t.usuario_subido_por.nombre,
     categories: (t.testimonios_categorias as { id_categoria: number; id_testimonio: number; categorias: { nombre: string } }[] | undefined)?.map((tc) => tc.categorias.nombre) || [],
     tags: (t.testimonios_etiquetas as { id_etiquetas: number; id_testimonio: number; etiquetas: { nombre: string } }[] | undefined)?.map((te) => te.etiquetas.nombre) || [],
     event: (t.testimonios_eventos as { id_evento: number; id_testimonio: number; eventos_historicos: { nombre: string } }[] | undefined)?.[0]?.eventos_historicos.nombre || null,
@@ -511,7 +511,7 @@ export const testimonyService = {
           cursorValue = lastItem.titulo;
           break;
         case "duracion":
-          cursorValue = lastItem.duracion.toString();
+          cursorValue = lastItem.duracion?.toString() ?? '0';
           break;
 
         default:
@@ -546,7 +546,7 @@ export const testimonyService = {
     const testimony = await prisma.testimonios.findUnique({
       where: { id_testimonio: testimonyId },
       include: {
-        usuarios_testimonios_subido_porTousuarios: true,
+        usuario_subido_por: true,
       },
     });
 
@@ -694,7 +694,7 @@ export const testimonyService = {
       include: {
         estado: { select: { nombre: true } },
         medio: { select: { nombre: true } },
-        usuarios_testimonios_subido_porTousuarios: { select: { nombre: true } },
+        usuario_subido_por: { select: { nombre: true } },
         testimonios_categorias: {
           include: { categorias: { select: { nombre: true } } },
         },
@@ -819,7 +819,7 @@ export const testimonyService = {
       updatedAt: updatedTestimony.updated_at,
       status: updatedTestimony.estado.nombre,
       format: updatedTestimony.medio.nombre,
-      author: updatedTestimony.usuarios_testimonios_subido_porTousuarios.nombre,
+      author: updatedTestimony.usuario_subido_por.nombre,
       categories: updatedTestimony.testimonios_categorias.map(
         (tc) => tc.categorias.nombre
       ),

@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from "@angular/common";
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -12,7 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NotificationService } from '@app/core/services/notification.service';
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "@app/features/auth/services/auth";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -25,7 +25,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    RouterLink
   ],
   templateUrl: "./forgot-password.component.html",
   styleUrl: "../../auth.styles.scss",
@@ -38,16 +39,16 @@ export default class ForgotPasswordComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  protected loading = false;
-  protected error: string | null = null;
+  protected loading = signal(false);
+  protected error = signal<string | null>(null);
   protected forgotPasswordForm: FormGroup = this.fb.group({
     email: ["", [Validators.required, Validators.email]],
   });
 
   onSubmit() {
     if (this.forgotPasswordForm.valid) {
-      this.loading = true;
-      this.error = null;
+      this.loading.set(true);
+      this.error.set(null);
       const email = this.forgotPasswordForm.get("email")?.value;
 
       this.authService.requestPasswordReset(email).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -56,14 +57,14 @@ export default class ForgotPasswordComponent {
             "Se han enviado las instrucciones a tu correo electrónico",
           );
           this.router.navigate(["/login"]);
-          this.loading = false;
+          this.loading.set(false);
         },
         error: (err) => {
           const errorMessage =
             err.error?.message || "Ocurrió un error al procesar tu solicitud";
-          this.error = errorMessage;
+          this.error.set(errorMessage);
           this.notification.error(errorMessage);
-          this.loading = false;
+          this.loading.set(false);
         },
       });
     }

@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import { NotificationService } from '@app/core/services/notification.service';
 import { MatButtonModule } from "@angular/material/button";
@@ -35,14 +35,13 @@ type SortOrder = 'newest' | 'oldest';
 export class TestimonyCommentsComponent implements OnInit {
   testimonyId = input.required<number>();
   comments: Comment[] = [];
-  isLoading = false;
-  isLoadingMore = false;
+  isLoading = signal(false);
+  isLoadingMore = signal(false);
   totalComments = 0;
   currentPage = 1;
   totalPages = 1;
   sortOrder: SortOrder = 'newest';
 
-  private ref = inject(ChangeDetectorRef);
   private commentService = inject(CommentService);
   private notification = inject(NotificationService);
   private destroyRef = inject(DestroyRef);
@@ -72,7 +71,6 @@ export class TestimonyCommentsComponent implements OnInit {
   toggleSort() {
     this.sortOrder = this.sortOrder === 'newest' ? 'oldest' : 'newest';
     this.sortComments();
-    this.ref.markForCheck();
   }
 
   private sortComments() {
@@ -84,9 +82,8 @@ export class TestimonyCommentsComponent implements OnInit {
   }
 
   loadComments(page: number = 1) {
-    const loadingSignal = page === 1 ? (v: boolean) => this.isLoading = v : (v: boolean) => this.isLoadingMore = v;
+    const loadingSignal = page === 1 ? (v: boolean) => this.isLoading.set(v) : (v: boolean) => this.isLoadingMore.set(v);
     loadingSignal(true);
-    this.ref.markForCheck();
 
     this.commentService.getByTestimonioId(this.testimonyId(), page, PAGE_SIZE)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -108,23 +105,21 @@ export class TestimonyCommentsComponent implements OnInit {
           this.currentPage = response.meta.page;
           this.totalPages = response.meta.totalPages;
           loadingSignal(false);
-          this.ref.markForCheck();
         },
         error: () => {
           loadingSignal(false);
           this.notification.error('Error al cargar comentarios');
-          this.ref.markForCheck();
         },
       });
   }
 
   loadMore() {
-    if (!this.hasMorePages || this.isLoadingMore) return;
+    if (!this.hasMorePages || this.isLoadingMore()) return;
     this.loadComments(this.currentPage + 1);
   }
 
   onNewComment(comment: Comment) {
-    this.isLoading = false;
+    this.isLoading.set(false);
     this.notification.info(
       'Tu comentario fue enviado exitosamente. Esperando aprobación del administrador.',
       'Cerrar',
@@ -134,6 +129,5 @@ export class TestimonyCommentsComponent implements OnInit {
 
   onCommentsUpdated() {
     this.totalComments = this.countReplies(this.comments);
-    this.ref.markForCheck();
   }
 }

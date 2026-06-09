@@ -78,7 +78,7 @@ export default class TestimonyUploadComponent implements OnInit {
   mediaPreview: string | null = null;
   mediaType: MediaFormat | null = null;
   shareLocation: boolean = false;
-  submitting = false;
+  submitting = signal(false);
   cargandoTestimonio = signal(false);
   eventName = signal<string>('Ninguno');
 
@@ -251,7 +251,7 @@ export default class TestimonyUploadComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
 
     const payload: TestimonyInput = {
       title: this.testimony.title,
@@ -279,7 +279,7 @@ export default class TestimonyUploadComponent implements OnInit {
           'Cerrar',
           'success',
         );
-        this.submitting = false;
+        this.submitting.set(false);
         this.resetForm();
         this.router.navigate(['/explore']);
       },
@@ -297,7 +297,7 @@ export default class TestimonyUploadComponent implements OnInit {
             'Error en los datos numéricos (evento, latitud o longitud). Déjalos en blanco si no aplican.';
         }
         this.openSnackBar(errorMessage, 'Reintentar', 'error');
-        this.submitting = false;
+        this.submitting.set(false);
       },
     });
   }

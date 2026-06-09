@@ -6,7 +6,7 @@ import { sseManager } from "@app/lib/sse-manager";
 const NOTIFICATION_INCLUDE = {
   testimonios: { select: { titulo: true } },
   estado: { select: { nombre: true } },
-  forotema: { select: { titulo: true } },
+  foro_temas: { select: { titulo: true } },
 } as const;
 
 export const cambiarEstadoSchema = object({
@@ -111,7 +111,7 @@ export class NotificacionModel {
     titulo_testimonio: string
   ) {
 
-    var mensaje = "";
+      let mensaje = "";
     switch (id_estado) {
       case 1:
         mensaje = `Tu testimonio "${titulo_testimonio}" ha sido enviado para revisión`
