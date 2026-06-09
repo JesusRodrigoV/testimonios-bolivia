@@ -238,6 +238,8 @@ export const testimonyService = {
       throw new Error("No autorizado para ver este testimonio");
     }
 
+
+    
     const ratingStats = await prisma.calificaciones.aggregate({
       where: {
         id_testimonio: id,

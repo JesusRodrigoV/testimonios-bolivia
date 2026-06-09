@@ -1,57 +1,145 @@
 import prisma from '@app/lib/prisma';
-import DeepgramClient from '@deepgram/sdk';
 import config from '@config';
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
+
+interface DeepgramResponse {
+  results: {
+    channels: Array<{
+      alternatives: Array<{
+        transcript: string;
+      }>;
+      detected_language?: string;
+    }>;
+  };
+  metadata: {
+    duration: number;
+    channels: number;
+    format: string;
+  };
+}
+
+interface DeepgramError {
+  error: string;
+  details?: string;
+}
+
+const writeFileAsync = promisify(fs.writeFile);
+const unlinkAsync = promisify(fs.unlink);
 
 export class TranscripcionService {
-
-  async transcribirArchivo(url: string, testimonioId: number, usuarioId: number) {
+  private async descargarArchivo(url: string): Promise<string> {
     try {
-      const deepgram = new DeepgramClient({ key: config.deepgramApiKey });
+      const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'arraybuffer'
+      });
 
-      const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
-        { url },
-        {
-          model: 'nova-3',
-          language: 'es',
-          punctuate: true,
-          smart_format: true,
-        }
-      );
+      const extension = path.extname(url) || '.mp4';
+      const tempFilePath = path.join('uploads', `${Date.now()}${extension}`);
+      
+      await writeFileAsync(tempFilePath, response.data);
+      return tempFilePath;
+    } catch (error) {
+      throw new Error('Error al descargar el archivo desde Cloudinary');
+    }
+  }
 
-      if (error || !result) {
-        throw new Error(error?.message || 'Error al transcribir el archivo');
+  private getMimeType(extension: string): string {
+    const mimeTypes: { [key: string]: string } = {
+      '.mp4': 'video/mp4',
+      '.mov': 'video/quicktime',
+      '.avi': 'video/x-msvideo',
+      '.mp3': 'audio/mpeg',
+      '.wav': 'audio/wav',
+      '.m4a': 'audio/mp4',
+      '.ogg': 'audio/ogg'
+    };
+    return mimeTypes[extension.toLowerCase()] || 'application/octet-stream';
+  }
+
+  async transcribirArchivo(
+    urlArchivo: string,
+    testimonioId: number,
+    usuarioId: number
+  ) {
+    let tempFilePath: string | null = null;
+    
+    try {
+      tempFilePath = await this.descargarArchivo(urlArchivo);
+      const extension = path.extname(urlArchivo);
+      const mimeType = this.getMimeType(extension);
+
+      const audioBuffer = fs.readFileSync(tempFilePath);
+
+      const response = await fetch('https://api.deepgram.com/v1/listen?model=nova-3&smart_format=true&punctuate=true&diarize=true&detect_language=true', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${config.deepgramApiKey}`,
+          'Content-Type': mimeType,
+        },
+        body: audioBuffer,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json() as DeepgramError;
+        throw new Error(`Error en la API de Deepgram: ${errorData.error || 'Error desconocido'}`);
       }
 
-      const channel = result.results.channels[0];
-      const transcript = channel.alternatives[0].transcript;
-      const detectedLanguage = channel.detected_language || 'es';
+      const data = await response.json() as DeepgramResponse;
+
+      if (!data.results?.channels?.[0]?.alternatives?.[0]?.transcript) {
+        throw new Error('No se pudo obtener la transcripción del audio');
+      }
+
+      const idiomaDetectado = data.results?.channels?.[0]?.detected_language || 'unknown';
 
       const transcripcion = await prisma.transcripciones.create({
         data: {
-          contenido: transcript,
-          idioma: detectedLanguage,
-          id_testimonio: testimonioId,
-          creado_por_id_usuario: usuarioId,
+          contenido: data.results.channels[0].alternatives[0].transcript,
+          idioma: idiomaDetectado,
+          testimonios: {
+            connect: {
+              id_testimonio: testimonioId
+            }
+          },
+          usuarios: {
+            connect: {
+              id_usuario: usuarioId
+            }
+          }
         },
+        include: {
+          testimonios: true,
+          usuarios: true
+        }
       });
 
       return {
         success: true,
         data: transcripcion,
         metadata: {
-          duracion: result.metadata.duration,
-          canales: result.metadata.channels,
-          formato: 'audio',
+          duracion: data.metadata?.duration ?? 0,
+          canales: data.metadata?.channels ?? 1,
+          formato: data.metadata?.format ?? 'unknown',
         },
       };
     } catch (error) {
-      throw error;
+      console.error("Error original de Deepgram/Código:", error);
+      throw new Error('Error al procesar la transcripción');
+    } finally {
+      if (tempFilePath) {
+        try {
+          await unlinkAsync(tempFilePath);
+        } catch (error) {
+        }
+      }
     }
   }
 
-  /**
-   * Obtiene una transcripción específica por su ID único.
-   */
   async obtenerTranscripcion(id: number) {
     try {
       const transcripcion = await prisma.transcripciones.findUnique({
@@ -74,7 +162,6 @@ export class TranscripcionService {
       throw error;
     }
   }
-
 
   async obtenerTranscripcionesPorTestimonio(testimonioId: number) {
     try {

@@ -22,6 +22,4 @@ COPY --from=builder /app ./
 # Exponemos el puerto de Express
 EXPOSE 4000
 
-# Comando final LIMPIO: Solo arranca el servidor
-# Cambia lo que tengas al final por esto:
-CMD ["sh", "-c", "bun prisma/seed.ts && bun run index.ts"]
+CMD ["bun", "run", "index.ts"]

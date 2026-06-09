@@ -30,6 +30,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 import { sseRouter } from "@app/routes/notificacion-sse.route";
 
+app.get("/", (_req, res) => {
+  res.status(200).json({ status: "healthy", timestamp: new Date() });
+});
+
 app.use("/auth", routers.authRouter);
 app.use("/media", routers.testimoniosRouter);
 app.use("/categories", routers.categoriaRouter);
