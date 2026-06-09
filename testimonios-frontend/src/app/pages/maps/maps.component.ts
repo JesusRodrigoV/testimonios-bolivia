@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core'; // <-- 1. Importa DestroyRef
 import { TestimonioService } from '@app/features/testimony/services';
 import { LeafletModule } from '@bluehalo/ngx-leaflet';
 import { latLng, tileLayer, MapOptions, Map, marker, icon } from 'leaflet';
@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export default class MapsComponent {
   private testimonyService = inject(TestimonioService);
+  private destroyRef = inject(DestroyRef); // <-- 2. Inyecta la referencia de destrucción aquí arriba
 
   options: MapOptions = {
     center: latLng(-17.0, -65.0),
@@ -24,6 +25,7 @@ export default class MapsComponent {
       })
     ]
   };
+  
   myIcon = icon({
     iconUrl: 'assets/images/marker.png',
     iconSize: [40, 40],
@@ -32,7 +34,7 @@ export default class MapsComponent {
 
   onMapReady(map: Map) {
     this.testimonyService.getTestimonyMap()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef)) // <-- 3. Pásale la referencia aquí adentro
       .subscribe({
         next: (testimonios) => {
           testimonios.forEach(testimonio => {

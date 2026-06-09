@@ -1,5 +1,5 @@
 export const environment = {
-  apiUrl: "http://localhost:4000",
+  apiUrl: "https://dywa904z2lyyd.cloudfront.net",
   cloudinary: {
     cloudName: "dw7jxd8oo",
     uploadPreset: "legado_bolivia",
