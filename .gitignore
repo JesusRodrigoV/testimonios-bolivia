@@ -34,3 +34,8 @@ uploads/
 Thumbs.db
 
 # --- Docker config (per-project, keep tracked) ---
+
+# --- Project docs (not part of source) ---
+.atl/
+articulo.md
+docs.md
