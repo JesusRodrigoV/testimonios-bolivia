@@ -1,12 +1,7 @@
 :host {
-  --accent-text-color: #fff;
   --star-color: #ffa500;
   --star-border-color: #ffa500;
   --star-empty-color: #ffa500;
-  --star-empty-border-color: #ccc;
-  --action-yellow: #b8860b;
-  --green: #2e7d32;
-  --yellow: #f5a623;
   --bg-subtle: rgba(0, 0, 0, 0.02);
   --bg-hover: rgba(0, 0, 0, 0.05);
   --bg-transcription: rgba(0, 0, 0, 0.03);
@@ -15,10 +10,6 @@
     --star-color: #f0c040;
     --star-border-color: #f0c040;
     --star-empty-color: #f0c040;
-    --star-empty-border-color: #666;
-    --action-yellow: #d4a017;
-    --green: #4caf50;
-    --yellow: #f0c040;
     --bg-subtle: rgba(255, 255, 255, 0.05);
     --bg-hover: rgba(255, 255, 255, 0.1);
     --bg-transcription: rgba(255, 255, 255, 0.05);
@@ -28,7 +19,9 @@
 .testimony-page {
   color: var(--text-primary);
   padding: 24px;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
   min-height: calc(100vh - var(--header-height));
   display: flex;
   flex-direction: column;
@@ -106,7 +99,7 @@ audio {
 }
 
 .share-btn {
-  color: var(--action-yellow);
+  color: var(--color-accent);
 }
 
 .download-btn,
@@ -148,12 +141,12 @@ audio {
 .meta-details {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.3s ease, padding 0.3s ease;
   padding-top: 8px;
 }
 
 .meta-details.expanded {
-  max-height: 500px;
+  max-height: none;
 }
 
 .meta-details p {
@@ -209,6 +202,10 @@ audio {
 
 .transcription {
   margin-bottom: 16px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
 }
 
 .transcription-header {
@@ -286,6 +283,7 @@ audio {
   margin-bottom: 16px;
   padding: 16px;
   border-radius: 8px;
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   background: var(--bg-subtle);
@@ -294,7 +292,7 @@ audio {
 .rating-title {
   font-size: 18px;
   font-weight: 500;
-  color: var(--green);
+  color: var(--color-primary-hover);
   margin: 0 0 12px;
 }
 
@@ -318,13 +316,13 @@ audio {
 }
 
 .rating-average {
-  background: var(--yellow);
-  color: var(--text-primary);
+  background: var(--color-accent-light);
+  color: #000;
 }
 
 .rating-total {
-  background: var(--green);
-  color: var(--accent-text-color);
+  background: var(--color-primary-hover);
+  color: #fff;
 }
 
 .rating-average i,
@@ -389,8 +387,97 @@ audio {
 
 .comments-sidebar {
   flex: 0 0 40%;
-  border-left: 1px solid var(--border-color);
-  padding-left: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  align-self: flex-start;
+  position: sticky;
+  top: calc(var(--header-height) + 24px);
+}
+
+.skeleton-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.skeleton-media {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--border-color) 0%, var(--bg-card) 50%, var(--border-color) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.skeleton-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--border-color) 0%, var(--bg-card) 50%, var(--border-color) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--border-color) 0%, var(--bg-card) 50%, var(--border-color) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line--title {
+  width: 60%;
+  height: 28px;
+}
+
+.skeleton-line--subtitle {
+  width: 40%;
+}
+
+.skeleton-line--short {
+  width: 30%;
+}
+
+.skeleton-line--medium {
+  width: 55%;
+}
+
+.skeleton-line--long {
+  width: 85%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes bounce {
@@ -420,8 +507,10 @@ audio {
   .main-content,
   .comments-sidebar {
     flex: 1 1 100%;
-    border-left: none;
     padding-left: 0;
+    border: none;
+    border-radius: 12px;
+    position: static;
   }
 
   .main-content .title {

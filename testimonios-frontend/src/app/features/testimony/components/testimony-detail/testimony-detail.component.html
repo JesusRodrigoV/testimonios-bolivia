@@ -1,4 +1,27 @@
 <div class="testimony-page" scrollTop>
+  @if (isLoading()) {
+  <div class="skeleton-page">
+    <div class="skeleton-media"></div>
+    <div class="skeleton-header">
+      <div class="skeleton-line skeleton-line--title"></div>
+      <div class="skeleton-line skeleton-line--subtitle"></div>
+    </div>
+    <div class="skeleton-actions">
+      <div class="skeleton-btn"></div>
+      <div class="skeleton-btn"></div>
+      <div class="skeleton-btn"></div>
+    </div>
+    <div class="skeleton-block">
+      <div class="skeleton-line skeleton-line--short"></div>
+      <div class="skeleton-line skeleton-line--medium"></div>
+      <div class="skeleton-line skeleton-line--long"></div>
+    </div>
+    <div class="skeleton-block">
+      <div class="skeleton-line skeleton-line--long"></div>
+      <div class="skeleton-line skeleton-line--long"></div>
+    </div>
+  </div>
+  } @else {
   <div class="page-header">
     <button
       mat-icon-button
@@ -18,7 +41,7 @@
         <audio [src]="testimony()!.url" controls></audio>
         }
       </div>
-      <h1 class="title">{{ testimony()?.title || "Cargando..." }}</h1>
+      <h1 class="title">{{ testimony()?.title }}</h1>
       <div class="actions">
         <button
           mat-raised-button
@@ -123,6 +146,7 @@
             mat-icon-button
             (click)="toggleTranscription()"
             class="transcription-toggle-btn"
+            [matTooltip]="isTranscriptionExpanded() ? 'Mostrar menos' : 'Mostrar más'"
           >
             <mat-icon>{{
               isTranscriptionExpanded() ? "expand_less" : "expand_more"
@@ -217,4 +241,5 @@
       }
     </div>
   </div>
+  }
 </div>
