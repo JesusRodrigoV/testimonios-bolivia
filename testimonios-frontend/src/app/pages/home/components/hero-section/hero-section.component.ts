@@ -44,6 +44,10 @@ export class HeroSectionComponent implements AfterViewInit {
 
   private animateParticula($elem: HTMLElement, posX: number) {
     animate($elem, {
+      opacity: [
+        { to: 0.6, ease: "outExpo", duration: 400 },
+        { to: 0.3, ease: "inOutCirc", duration: 400 },
+      ],
       y: [
         { to: "-2.75rem", ease: "outExpo", duration: 200 },
         { to: 0, ease: "outBounce", duration: 200, delay: 100 },

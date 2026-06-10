@@ -14,7 +14,7 @@
       [editable]="true"
       label="Subir archivo multimedia"
     >
-      <ng-template matStepLabel>Subir archivo</ng-template>
+      <ng-template matStepLabel>Archivo</ng-template>
       <div class="step-form">
         <div class="form-group upload-wrapper">
           <div class="upload-state" [class.uploading]="cargandoTestimonio()">
@@ -38,7 +38,8 @@
         </div>
         <div class="step-actions">
           <button
-            mat-button
+            mat-raised-button
+            class="btn-next"
             matStepperNext
             type="button"
             (click)="markFileStepTouched()"
@@ -55,7 +56,7 @@
       label="Información básica"
       [completed]="isInfoFormValid()"
     >
-      <ng-template matStepLabel>Información</ng-template>
+      <ng-template matStepLabel>Info</ng-template>
       <div class="step-form">
         <div class="form-group">
           <mat-form-field appearance="outline">
@@ -100,7 +101,8 @@
             Anterior
           </button>
           <button
-            mat-button
+            mat-raised-button
+            class="btn-next"
             matStepperNext
             type="button"
             [disabled]="!isInfoFormValid()"
@@ -183,7 +185,7 @@
           <button mat-button matStepperPrevious type="button">
             Anterior
           </button>
-          <button mat-button matStepperNext type="button">
+          <button mat-raised-button class="btn-next" matStepperNext type="button">
             Siguiente
           </button>
         </div>
@@ -226,7 +228,7 @@
           <button mat-button matStepperPrevious type="button">
             Anterior
           </button>
-          <button mat-button matStepperNext type="button">
+          <button mat-raised-button class="btn-next" matStepperNext type="button">
             Siguiente
           </button>
         </div>

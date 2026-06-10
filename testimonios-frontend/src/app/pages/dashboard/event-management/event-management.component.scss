@@ -1,5 +1,7 @@
 :host{
   --background-overlay: rgba(255, 255, 255, 0.8);
+  --table-row-background: var(--bg-card);
+
   :root.dark-mode &{
     --background-overlay: rgba(0, 0, 0, 0.8);
   }
@@ -42,7 +44,7 @@ table {
   }
 
   th {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
     font-weight: 600;
     border-bottom: 2px solid var(--border-color);
   }
@@ -56,7 +58,7 @@ table {
   }
 
   tr:hover {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
   }
 
   .desc-cell {
@@ -86,7 +88,7 @@ table {
 }
 
 .text-muted {
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

@@ -15,6 +15,7 @@ import { Comment } from "@app/features/testimony/models/comment.model";
 import { CommentService } from "@app/features/testimony/services";
 import { CommentListComponent } from "./comment-list/comment-list.component";
 import { CommentFormComponent } from "./comment-form";
+import { AuthStore } from '@app/auth.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const PAGE_SIZE = 10;
@@ -42,6 +43,7 @@ export class TestimonyCommentsComponent implements OnInit {
   totalPages = 1;
   sortOrder: SortOrder = 'newest';
 
+  readonly authStore = inject(AuthStore);
   private commentService = inject(CommentService);
   private notification = inject(NotificationService);
   private destroyRef = inject(DestroyRef);

@@ -79,14 +79,14 @@
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background: rgba(255, 0, 0, 0.1);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
   border-radius: 8px;
   margin-top: 16px;
   color: var(--text-primary);
   animation: slide-in 0.3s ease-out;
 
   mat-icon {
-    color: #d32f2f;
+    color: var(--color-danger);
   }
 
   p {

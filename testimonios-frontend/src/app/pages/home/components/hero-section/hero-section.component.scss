@@ -1,6 +1,6 @@
 :host {
-  --primary-gradient-start: #1a5c38;
-  --primary-gradient-end: #2e8b57;
+  --primary-gradient-start: #2a7c48;
+  --primary-gradient-end: #3da86a;
   --shadow-color: rgba(0, 0, 0, 0.3);
   --particle-color: rgba(255, 255, 255, 0.3);
   --spacing-unit: 1rem;
@@ -9,15 +9,15 @@
   --font-size-small: 1.1rem;
   --legado-color: #ff4d4f;
   --de-color: #fadb14;
-  --bolivia-color: #52c41a;
+  --bolivia-color: #006b2f;
 
   :root.dark-mode & {
-    --primary-gradient-start: #123c24;
-    --primary-gradient-end: #226644;
+    --primary-gradient-start: #1a5c38;
+    --primary-gradient-end: #2a7c48;
     --shadow-color: rgba(0, 0, 0, 0.5);
     --legado-color: #ff7875;
     --de-color: #ffe58f;
-    --bolivia-color: #95de64;
+    --bolivia-color: #52c41a;
   }
 
   display: block;
@@ -84,6 +84,7 @@
   position: absolute;
   background: var(--particle-color);
   border-radius: 50%;
+  opacity: 0;
 }
 
 .particle-1 {
@@ -119,13 +120,14 @@
 }
 
 .manuscript-text {
+  font-family: 'Tangerine', cursive;
   font-size: 7rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: calc(var(--spacing-unit) * 1.5);
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7), 0 0 4px rgba(0, 0, 0, 0.5);
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  line-height: 1;
   animation: fadeIn 1s ease-out;
 }
 
@@ -145,6 +147,7 @@ h2 {
   font-size: var(--font-size-medium);
   font-weight: 600;
   margin-bottom: calc(var(--spacing-unit) * 1.5);
+  color: #fff;
   animation: fadeIn 1.2s ease-out 0.2s both;
 }
 
@@ -153,6 +156,7 @@ p {
   max-width: 40rem;
   margin: 0 0 calc(var(--spacing-unit) * 2);
   line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
   animation: fadeIn 1.4s ease-out 0.4s both;
 }
 
@@ -160,6 +164,25 @@ p {
   display: flex;
   gap: calc(var(--spacing-unit) * 1.5);
   animation: fadeIn 1.6s ease-out 0.6s both;
+}
+
+.btn-cta {
+  background: var(--color-accent) !important;
+  color: #fff !important;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 4px 24px;
+  border-radius: 24px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: var(--color-accent-light) !important;
+  }
 }
 
 @media (max-width: 768px) {

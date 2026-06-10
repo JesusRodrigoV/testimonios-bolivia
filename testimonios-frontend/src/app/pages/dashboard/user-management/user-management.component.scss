@@ -1,7 +1,33 @@
 :host{
   --background-overlay: rgba(255, 255, 255, 0.8);
-  :root.dark-mode &{
+  --table-row-background: var(--bg-card);
+  --role-1-bg: #ffe5e5;
+  --role-1-text: #d32f2f;
+  --role-2-bg: #e3f2fd;
+  --role-2-text: #1976d2;
+  --role-3-bg: #e8f5e9;
+  --role-3-text: #388e3c;
+  --btn-edit-bg: #e3f2fd;
+  --btn-edit-text: #1976d2;
+  --btn-edit-hover: #bbdefb;
+  --btn-delete-bg: #ffebee;
+  --btn-delete-text: #d32f2f;
+  --btn-delete-hover: #ffcdd2;
+
+  :root.dark-mode & {
     --background-overlay: rgba(0, 0, 0, 0.8);
+    --role-1-bg: #5c2d2d;
+    --role-1-text: #ff8a80;
+    --role-2-bg: #2a4b6b;
+    --role-2-text: #4fc3f7;
+    --role-3-bg: #2e4b33;
+    --role-3-text: #81c784;
+    --btn-edit-bg: #2a4b6b;
+    --btn-edit-text: #4fc3f7;
+    --btn-edit-hover: #3a5b7b;
+    --btn-delete-bg: #5c2d2d;
+    --btn-delete-text: #ff8a80;
+    --btn-delete-hover: #6c3d3d;
   }
 }
 
@@ -42,7 +68,7 @@ table {
   }
 
   th {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
     font-weight: 600;
     border-bottom: 2px solid var(--border-color);
   }
@@ -56,7 +82,7 @@ table {
   }
 
   tr:hover {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
   }
 }
 
@@ -65,7 +91,7 @@ table {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: var(--background);
+  background-color: var(--bg-secondary);
   border: 2px solid var(--border-color);
 }
 
@@ -77,23 +103,23 @@ table {
   font-weight: 500;
 
   &.role-1 {
-    background: #ffe5e5;
-    color: #d32f2f;
+    background: var(--role-1-bg);
+    color: var(--role-1-text);
   }
 
   &.role-2 {
-    background: #e3f2fd;
-    color: #1976d2;
+    background: var(--role-2-bg);
+    color: var(--role-2-text);
   }
 
   &.role-3 {
-    background: #e8f5e9;
-    color: #388e3c;
+    background: var(--role-3-bg);
+    color: var(--role-3-text);
   }
 }
 
 .btn-primary {
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -130,20 +156,20 @@ table {
   transition: all 0.2s;
 
   &.edit {
-    background: #e3f2fd;
-    color: #1976d2;
+    background: var(--btn-edit-bg);
+    color: var(--btn-edit-text);
 
     &:hover {
-      background: #bbdefb;
+      background: var(--btn-edit-hover);
     }
   }
 
   &.delete {
-    background: #ffebee;
-    color: #d32f2f;
+    background: var(--btn-delete-bg);
+    color: var(--btn-delete-text);
 
     &:hover {
-      background: #ffcdd2;
+      background: var(--btn-delete-hover);
     }
   }
 
@@ -172,7 +198,7 @@ table {
 }
 
 .text-muted {
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

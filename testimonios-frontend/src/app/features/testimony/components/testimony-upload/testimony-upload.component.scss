@@ -57,11 +57,6 @@
       font-weight: 500;
     }
 
-    .mat-step-icon {
-      background: var(--color-primary);
-      color: var(--bg-card);
-    }
-
     .mat-step-icon-selected {
       background: var(--gradient-primary);
     }
@@ -115,27 +110,23 @@ mat-chip-grid {
   gap: 1rem;
   justify-content: flex-end;
   padding: 1rem 0;
+}
 
-  button {
-    background: var(--gradient-primary);
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
+.btn-next {
+  background: var(--color-primary) !important;
+  color: #fff !important;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
 
-    &[disabled] {
-      opacity: 0.7;
-      filter: grayscale(0.5);
-    }
+  &[disabled] {
+    opacity: 0.4;
+    filter: none;
+  }
 
-    &:not([disabled]):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px color-mix(in srgb, var(--color-primary) 20%, transparent);
-    }
-
-    &.mat-button {
-      background: none;
-      border: 1px solid var(--color-primary);
-    }
+  &:not([disabled]):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
 }
 
@@ -230,7 +221,6 @@ mat-chip-grid {
 }
 
 @include mat.stepper-overrides((
-  header-icon-foreground-color: var(--bg-card),
   header-selected-state-icon-background-color: var(--color-primary),
   header-selected-state-icon-foreground-color: var(--bg-card),
   header-done-state-icon-background-color: var(--color-success),
@@ -240,4 +230,5 @@ mat-chip-grid {
   header-label-text-color: var(--text-primary),
   header-selected-state-label-text-color: var(--text-primary),
   header-error-state-label-text-color: var(--color-danger),
+  header-optional-label-text-color: var(--text-secondary),
 ));

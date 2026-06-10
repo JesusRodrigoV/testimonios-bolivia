@@ -1,7 +1,45 @@
 :host{
   --background-overlay: rgba(255, 255, 255, 0.8);
+  --table-row-background: var(--bg-card);
+  --status-pending-bg: #fff3cd;
+  --status-pending-text: #856404;
+  --status-approved-bg: #e8f5e9;
+  --status-approved-text: #388e3c;
+  --status-rejected-bg: #ffe5e5;
+  --status-rejected-text: #d32f2f;
+  --btn-view-bg: #e0f7fa;
+  --btn-view-text: #00796b;
+  --btn-view-hover: #b2ebf2;
+  --btn-approve-bg: #e8f5e9;
+  --btn-approve-text: #388e3c;
+  --btn-approve-hover: #c8e6c9;
+  --btn-reject-bg: #ffebee;
+  --btn-reject-text: #d32f2f;
+  --btn-reject-hover: #ffcdd2;
+  --btn-delete-bg: #ffebee;
+  --btn-delete-text: #d32f2f;
+  --btn-delete-hover: #ffcdd2;
+
   :root.dark-mode &{
     --background-overlay: rgba(0, 0, 0, 0.8);
+    --status-pending-bg: #5c4d1a;
+    --status-pending-text: #ffd54f;
+    --status-approved-bg: #2e4b33;
+    --status-approved-text: #81c784;
+    --status-rejected-bg: #5c2d2d;
+    --status-rejected-text: #ff8a80;
+    --btn-view-bg: #2a4b5b;
+    --btn-view-text: #4dd0e1;
+    --btn-view-hover: #3a5b6b;
+    --btn-approve-bg: #2e4b33;
+    --btn-approve-text: #81c784;
+    --btn-approve-hover: #3e5b43;
+    --btn-reject-bg: #5c2d2d;
+    --btn-reject-text: #ff8a80;
+    --btn-reject-hover: #6c3d3d;
+    --btn-delete-bg: #5c2d2d;
+    --btn-delete-text: #ff8a80;
+    --btn-delete-hover: #6c3d3d;
   }
 }
 
@@ -89,7 +127,7 @@ table {
   }
 
   th {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
     font-weight: 600;
     border-bottom: 2px solid var(--border-color);
   }
@@ -103,7 +141,7 @@ table {
   }
 
   tr:hover {
-    background-color: var(--background);
+    background-color: var(--bg-secondary);
   }
 }
 
@@ -115,23 +153,23 @@ table {
   font-weight: 500;
 
   &.status-pendiente {
-    background: #fff3cd;
-    color: #856404;
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
   }
 
   &.status-aprobado {
-    background: #e8f5e9;
-    color: #388e3c;
+    background: var(--status-approved-bg);
+    color: var(--status-approved-text);
   }
 
   &.status-rechazado {
-    background: #ffe5e5;
-    color: #d32f2f;
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
   }
 }
 
 .btn-primary {
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -168,38 +206,38 @@ table {
   transition: all 0.2s;
 
   &.view {
-    background: #e0f7fa;
-    color: #00796b;
+    background: var(--btn-view-bg);
+    color: var(--btn-view-text);
 
     &:hover {
-      background: #b2ebf2;
+      background: var(--btn-view-hover);
     }
   }
 
   &.approve {
-    background: #e8f5e9;
-    color: #388e3c;
+    background: var(--btn-approve-bg);
+    color: var(--btn-approve-text);
 
     &:hover {
-      background: #c8e6c9;
+      background: var(--btn-approve-hover);
     }
   }
 
   &.reject {
-    background: #ffebee;
-    color: #d32f2f;
+    background: var(--btn-reject-bg);
+    color: var(--btn-reject-text);
 
     &:hover {
-      background: #ffcdd2;
+      background: var(--btn-reject-hover);
     }
   }
 
   &.delete {
-    background: #ffebee;
-    color: #d32f2f;
+    background: var(--btn-delete-bg);
+    color: var(--btn-delete-text);
 
     &:hover {
-      background: #ffcdd2;
+      background: var(--btn-delete-hover);
     }
   }
 
@@ -228,7 +266,7 @@ table {
 }
 
 .text-muted {
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 .empty-state {
