@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RepliesDialogComponent } from './replies-dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmDialogComponent } from '@app/features/forum/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/features/shared/ui/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@app/core/services/notification.service';
 
 @Component({

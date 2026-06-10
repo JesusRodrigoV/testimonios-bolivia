@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   signal,
 } from "@angular/core";
@@ -23,21 +24,29 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export default class MyTestimoniesComponent {
   protected testimonies = signal<Testimony[]>([]);
-  private testimonyService = inject(TestimonioService);
+  protected loading = signal(true);
+  protected error = signal<string | null>(null);
 
+  private testimonyService = inject(TestimonioService);
   private router = inject(Router);
   private notification = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
 
   constructor() {
     this.loadTestimonies();
   }
 
   loadTestimonies(): void {
-    this.testimonyService.getMyTestimonies().pipe(takeUntilDestroyed()).subscribe({
+    this.loading.set(true);
+    this.error.set(null);
+    this.testimonyService.getMyTestimonies().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (testimonies) => {
         this.testimonies.set(testimonies);
+        this.loading.set(false);
       },
-      error: (error) => {
+      error: () => {
+        this.loading.set(false);
+        this.error.set("Error al cargar testimonios");
         this.notification.error("Error al cargar testimonios");
       },
     });

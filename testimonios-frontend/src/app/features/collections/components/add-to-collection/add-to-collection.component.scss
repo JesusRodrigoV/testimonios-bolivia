@@ -10,7 +10,7 @@
 
 .dialog-container {
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px var(--shadow-lg);
+  box-shadow: var(--shadow-lg);
   padding: 15px;
   min-width: 320px;
   max-width: 480px;
@@ -53,7 +53,7 @@ mat-dialog-content {
   flex-direction: column;
   gap: 8px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
   max-height: 240px;
   overflow-y: auto;
 
@@ -97,7 +97,7 @@ mat-dialog-content {
   padding: 12px;
   background: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 2px 8px var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
   margin-top: 1rem;
 
   mat-form-field {

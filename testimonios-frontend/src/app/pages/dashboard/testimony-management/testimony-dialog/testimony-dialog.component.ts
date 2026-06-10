@@ -9,7 +9,7 @@ import { MediaFormat } from "@app/features/testimony/models/media-format";
 import { Testimony } from "@app/features/testimony/models/testimonio.model";
 import { StatusEnum } from "@app/features/testimony/models/status.enum";
 import { TestimonioService } from "@app/features/testimony/services";
-import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from "@app/features/shared/ui/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-testimony-dialog",

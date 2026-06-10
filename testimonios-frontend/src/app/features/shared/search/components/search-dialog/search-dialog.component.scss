@@ -49,7 +49,7 @@
   padding: 1rem;
   border-radius: 0.5rem;
   background: var(--bg-card);
-  box-shadow: 0 1px 6px var(--shadow-sm);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease;
 }
 

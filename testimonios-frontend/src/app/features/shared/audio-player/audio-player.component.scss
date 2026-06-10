@@ -3,12 +3,12 @@
   border-radius: 12px;
   padding: 12px;
   background: var(--bg-card);
-  box-shadow: 0 4px 12px var(--shadow-md);
-  transition: box-shadow 0.3s ease;
-}
+  box-shadow: var(--shadow-md);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 
-:root.dark-mode .audio-player {
-  box-shadow: 0 4px 16px var(--shadow-md);
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 .audio-player ::ng-deep {

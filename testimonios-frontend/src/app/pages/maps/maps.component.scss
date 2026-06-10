@@ -79,11 +79,7 @@
     max-height: 450px;
     min-height: 300px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-    :root.dark-mode & {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    }
+    box-shadow: var(--shadow-md);
 
     .map {
       min-height: 300px;

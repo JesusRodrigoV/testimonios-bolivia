@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: center;
   background: var(--media-background);
-  box-shadow: 0 2px 10px var(--shadow-color); /* Sombra suave para destacar */
+  box-shadow: var(--shadow-md);
 }
 
 .media-preview video,

@@ -30,7 +30,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatDialog } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthStore } from "@app/auth.store";
-import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from "@app/features/shared/ui/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-forum-post-detail",

@@ -4,7 +4,6 @@ import {
   Component,
   DestroyRef,
   inject,
-  OnDestroy,
   signal,
 } from "@angular/core";
 import {
@@ -29,6 +28,7 @@ import { Testimony } from "@app/features/testimony/models/testimonio.model";
 import { TestimonioService } from "@app/features/testimony/services";
 import { ExploreFiltersStore } from "@app/features/testimony/stores/explore-filters.store";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-testimony-edit",
@@ -110,38 +110,29 @@ export default class TestimonyEditComponent {
 
     try {
       await this.exploreFiltersStore.loadFilters();
-
-      const categories = this.exploreFiltersStore.categories();
-      const events = this.exploreFiltersStore.events();
+      this.categories.set(this.exploreFiltersStore.categories());
+      this.events.set(this.exploreFiltersStore.events());
       const tags = this.exploreFiltersStore.tags();
 
-      this.testimonyService.getTestimony(id)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (testimony) => {
-            this.testimony.set(testimony);
-            this.categories.set(categories);
-            this.events.set(events);
-            this.allTags.set(tags.map((t) => t.name));
-            this.updateFilteredTags();
-            this.form.patchValue({
-              title: testimony.title ?? "",
-              description: testimony.description ?? "",
-              content: testimony.content ?? "",
-              categories: testimony.categories ?? [],
-              tags: testimony.tags ?? [],
-              eventId: testimony.event ? Number(testimony.event) : null,
-            });
-            this.loading.set(false);
-          },
-          error: () => {
-            this.notification.error("Error al cargar el testimonio");
-            this.router.navigate(["/my-testimonies"]);
-            this.loading.set(false);
-          },
-        });
+      const testimony = await firstValueFrom(
+        this.testimonyService.getTestimony(id).pipe(takeUntilDestroyed(this.destroyRef))
+      );
+
+      this.testimony.set(testimony);
+      this.allTags.set(tags.map((t) => t.name));
+      this.updateFilteredTags();
+      this.form.patchValue({
+        title: testimony.title ?? "",
+        description: testimony.description ?? "",
+        content: testimony.content ?? "",
+        categories: testimony.categories ?? [],
+        tags: testimony.tags ?? [],
+        eventId: testimony.event ? Number(testimony.event) : null,
+      });
+      this.loading.set(false);
     } catch {
-      this.notification.error("Error al cargar datos");
+      this.notification.error("Error al cargar el testimonio");
+      this.router.navigate(["/my-testimonies"]);
       this.loading.set(false);
     }
   }

@@ -7,14 +7,14 @@
   <div class="media" (click)="$event.stopPropagation()">
     @defer (on viewport) {
       @if (testimony().format === MediaFormat.Video) {
-        <app-video-player class="media-content" [videoUrl]="testimony().url" />
+        <app-video-player class="media-content is-video" [videoUrl]="testimony().url" />
       } @else if (testimony().format === MediaFormat.Audio) {
         <audio
           #audioPlayer
           [src]="testimony().url"
           controls
           loading="lazy"
-          class="media-content"
+          class="media-content is-audio"
         ></audio>
       }
     } @placeholder (minimum 500ms) {

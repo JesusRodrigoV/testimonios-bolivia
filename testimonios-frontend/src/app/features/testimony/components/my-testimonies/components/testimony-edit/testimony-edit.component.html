@@ -10,7 +10,7 @@
       @if (testimony()?.format === MediaFormat.Video) {
         <app-video-player [videoUrl]="testimony()!.url" />
       } @else if (testimony()?.format === MediaFormat.Audio) {
-        <audio [src]="testimony()?.url" controls class="audio-player"></audio>
+        <audio [src]="testimony()?.url" controls class="audio-player is-audio"></audio>
       }
       @if (testimony()?.latitude != null && testimony()?.longitude != null) {
         <p class="location-info">

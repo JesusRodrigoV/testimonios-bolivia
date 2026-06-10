@@ -13,7 +13,7 @@
   background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
   margin-bottom: 24px;
 }
 
@@ -154,7 +154,7 @@
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   animation: fade-in 0.5s ease-out;
 
   .comment-form {
@@ -236,7 +236,8 @@
   background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 
   .comments-header {
     display: flex;

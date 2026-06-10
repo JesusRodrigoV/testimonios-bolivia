@@ -19,7 +19,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { SpinnerComponent } from "@app/features/shared/ui/spinner";
-import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from "@app/features/shared/ui/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-testimony-management",

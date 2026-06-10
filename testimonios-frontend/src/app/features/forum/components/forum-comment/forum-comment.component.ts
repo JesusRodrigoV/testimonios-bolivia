@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ForumService } from '../../services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/features/shared/ui/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-forum-comment',

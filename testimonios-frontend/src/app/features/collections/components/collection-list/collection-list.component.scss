@@ -43,7 +43,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px var(--shadow-md);
+    box-shadow: var(--shadow-lg);
     background: var(--bg-secondary);
   }
 
@@ -97,7 +97,7 @@
   color: var(--text-primary);
   background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 .error mat-icon {

@@ -22,7 +22,7 @@
   left: 0;
   right: 0;
   z-index: 10000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   backdrop-filter: blur(8px);
 }
 
@@ -111,7 +111,7 @@
   border-radius: 9px;
   background: var(--bolivia-red, #d9291c);
   color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 :host ::ng-deep .notification-btn .mat-badge-content {
@@ -124,7 +124,7 @@
   padding: 8px 0;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .notifications-container {

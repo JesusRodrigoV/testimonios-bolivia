@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgStyle } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmDialogComponent } from '@app/features/forum/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/features/shared/ui/confirm-dialog/confirm-dialog.component';
 
 const ADMIN_ROLE = 1;
 

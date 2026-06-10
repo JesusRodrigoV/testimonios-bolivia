@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - var(--header-height));
   background: var(--bg-secondary);
   padding: 2rem;
 }
@@ -52,7 +52,7 @@
     right: 0;
     background: var(--color-primary);
     color: #fff;
-    box-shadow: 0 2px 8px var(--shadow-sm);
+    box-shadow: var(--shadow-sm);
   }
 
   .edit-image-btn:hover {
@@ -112,7 +112,7 @@
   .field-value {
     color: var(--text-muted);
     font-size: 0.95rem;
-    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   mat-form-field {
@@ -134,17 +134,28 @@
     background: #00843d;
     color: #fff;
     width: fit-content;
+    transition: background 0.3s ease;
+  }
+
+  :root.dark-mode .role-badge {
+    background: #006b32;
   }
 }
 
 .two-factor-enabled {
   color: var(--color-success);
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .two-factor-disabled {
   color: var(--color-danger);
   font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.field-value {
+  transition: color 0.3s ease;
 }
 
 .form-actions {
@@ -170,7 +181,7 @@
   background: var(--bg-card);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 12px var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 
   &.hero-skeleton {
     display: flex;

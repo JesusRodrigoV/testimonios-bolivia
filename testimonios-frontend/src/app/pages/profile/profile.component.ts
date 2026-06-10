@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, OnInit } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
 import { AuthStore } from "@app/auth.store";
@@ -14,10 +14,9 @@ import { UserService } from "./services/user.service";
 import { User } from "@app/features/auth/models/user.model";
 import { firstValueFrom } from "rxjs";
 import { SpinnerComponent } from "@app/features/shared/ui/spinner";
-import { Router } from "@angular/router";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from "@app/features/shared/ui/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-profile",
@@ -37,13 +36,12 @@ import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-d
   styleUrl: "./profile.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ProfileComponent {
+export default class ProfileComponent implements OnInit {
   private authStore = inject(AuthStore);
   private favoritesStore = inject(FavoritesStore);
   private userService = inject(UserService);
   private notification = inject(NotificationService);
   private fb = inject(FormBuilder);
-  private router = inject(Router);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
@@ -54,6 +52,10 @@ export default class ProfileComponent {
   isEditing = signal<boolean>(false);
   imagePreview = signal<string | null>(null);
   selectedFile: File | null = null;
+
+  ngOnInit(): void {
+    this.authStore.loadUserProfile();
+  }
 
   constructor() {
     this.profileForm = this.fb.group({
@@ -123,12 +125,12 @@ export default class ProfileComponent {
     const file = input.files[0];
     const validTypes = ['image/jpeg', 'image/png'];
     if (!validTypes.includes(file.type)) {
-      this.openSnackBar('Solo se permiten imágenes JPEG o PNG', 'error');
+      this.notification.error('Solo se permiten imágenes JPEG o PNG');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      this.openSnackBar('La imagen no debe exceder 5MB', 'error');
+      this.notification.error('La imagen no debe exceder 5MB');
       return;
     }
 
@@ -166,12 +168,12 @@ export default class ProfileComponent {
         this.profileForm.disable();
         this.imagePreview.set(null);
         this.selectedFile = null;
-        this.openSnackBar('Perfil actualizado exitosamente', 'success');
+        this.notification.success('Perfil actualizado exitosamente');
       } else {
         throw new Error('No se recibió respuesta del servidor');
       }
     } catch (error: any) {
-      this.openSnackBar(error.message || 'Error al actualizar el perfil', 'error');
+      this.notification.error(error.message || 'Error al actualizar el perfil');
     } finally {
       this.isSaving.set(false);
     }
@@ -189,11 +191,5 @@ export default class ProfileComponent {
     this.selectedFile = null;
   }
 
-  openSnackBar(message: string, type: 'success' | 'error') {
-    if (type === 'success') {
-      this.notification.success(message);
-    } else {
-      this.notification.error(message);
-    }
-  }
+
 }

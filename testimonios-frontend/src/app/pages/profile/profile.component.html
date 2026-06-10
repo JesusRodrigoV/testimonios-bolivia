@@ -110,9 +110,12 @@
             @if (isEditing()) {
               <div class="form-actions">
                 <button mat-raised-button color="primary" type="submit" [disabled]="!profileForm.valid || isSaving()">
-                  <axl-spinner size="small" [hidden]="!isSaving()" />
-                  <mat-icon [hidden]="isSaving()">save</mat-icon>
-                  <span [hidden]="isSaving()">Guardar Cambios</span>
+                  <mat-icon>save</mat-icon>
+                  @if (isSaving()) {
+                    <axl-spinner size="small" />
+                  } @else {
+                    Guardar Cambios
+                  }
                 </button>
                 <button mat-button type="button" (click)="cancelEdit()" [disabled]="isSaving()">
                   Cancelar

@@ -2,7 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-height));
   background: var(--bg-secondary);
 }
 
@@ -42,7 +42,7 @@
   padding: 4rem 2rem;
   background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   text-align: center;
   gap: 1rem;
 }
@@ -59,6 +59,97 @@
   margin: 0;
   font-size: 1.1rem;
   color: var(--text-secondary);
+}
+
+.error-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  gap: 1rem;
+}
+
+.error-state mat-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-danger);
+}
+
+.error-state p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.skeleton-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.skeleton-badge {
+  width: 80px;
+  height: 24px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--border-color) 0%, var(--bg-card) 50%, var(--border-color) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--border-color) 0%, var(--bg-card) 50%, var(--border-color) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-title {
+  width: 60%;
+  height: 20px;
+}
+
+.skeleton-desc {
+  width: 100%;
+
+  &.short {
+    width: 75%;
+  }
+}
+
+.skeleton-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.skeleton-icon {
+  height: 16px;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @media (max-width: 768px) {

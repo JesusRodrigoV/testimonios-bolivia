@@ -32,7 +32,7 @@ import { NotificationService } from '@app/core/services/notification.service';
 import { SpinnerComponent } from "@app/features/shared/ui/spinner";
 import { DatePipe } from "@angular/common";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmDialogComponent } from "@app/features/forum/components/confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from "@app/features/shared/ui/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-collection-list",
