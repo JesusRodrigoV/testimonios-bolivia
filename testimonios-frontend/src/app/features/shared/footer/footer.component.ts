@@ -103,5 +103,17 @@ export class FooterComponent {
       icon: 'bx bxl-github',
       external: true,
     },
+    {
+      name: 'Facebook',
+      url: '#',
+      icon: 'bx bxl-facebook-circle',
+      external: true,
+    },
+    {
+      name: 'Instagram',
+      url: '#',
+      icon: 'bx bxl-instagram-alt',
+      external: true,
+    },
   ];
 }

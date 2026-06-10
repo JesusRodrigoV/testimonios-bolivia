@@ -9,33 +9,22 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SpinnerComponent } from '@app/features/shared/ui/spinner';
 import { Testimony } from '@app/features/testimony/models/testimonio.model';
 import { Router } from '@angular/router';
 import { TestimonioService } from '@app/features/testimony/services';
-import {
-  Subject,
-  switchMap,
-  takeUntil,
-  catchError,
-  of,
-} from 'rxjs';
+import { Subject, switchMap, catchError, of, takeUntil } from 'rxjs';
 import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-search-dialog',
   imports: [
-    MatDialogModule,
     MatIconModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
     FormsModule,
     MatListModule,
     MatProgressBarModule,
@@ -50,15 +39,10 @@ import { SearchService } from '../../services/search.service';
 })
 export class SearchDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private destroyed$ = new Subject<void>();
   private cancelLoadMore$ = new Subject<void>();
   private testimonioService = inject(TestimonioService);
   private searchService = inject(SearchService);
   private router = inject(Router);
-
-  constructor() {
-    this.destroyRef.onDestroy(() => this.destroyed$.next());
-  }
 
   showResults$ = this.searchService.showResults$;
   searchQuery = signal('');
@@ -74,7 +58,7 @@ export class SearchDialogComponent implements OnInit {
   ngOnInit() {
     this.searchService.searchQuery$
       .pipe(
-        takeUntil(this.destroyed$),
+        takeUntilDestroyed(this.destroyRef),
         switchMap((query) => {
           this.searchQuery.set(query);
           this.cancelLoadMore$.next();
@@ -130,7 +114,7 @@ export class SearchDialogComponent implements OnInit {
         limit: this.limit,
         cursor: this.cursor(),
       })
-      .pipe(takeUntil(this.destroyed$), takeUntil(this.cancelLoadMore$))
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.cancelLoadMore$))
       .subscribe({
         next: (response) => {
           this.testimonies.set([...this.testimonies(), ...response.data]);

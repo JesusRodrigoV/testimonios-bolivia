@@ -10,6 +10,8 @@
 
   </header>
 
+  <mat-progress-bar mode="indeterminate" [class.hidden]="!navigating()" class="nav-progress" />
+
   <main class="app-main">
     <mat-drawer-container>
       <mat-drawer #drawer>
