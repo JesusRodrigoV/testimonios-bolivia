@@ -10,13 +10,18 @@ on:
     paths:
       - "testimonios-backend/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: legado-backend
   ECR_REGISTRY: 121638211372.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
-  test:
+  build-and-push:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -27,18 +32,13 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ hashFiles('testimonios-backend/bun.lock') }}
+          restore-keys: bun-
+
       - run: bun install --frozen-lockfile
-
-  build-and-push:
-    if: github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: testimonios-backend
-
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -51,11 +51,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        with:
+          context: testimonios-backend
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
