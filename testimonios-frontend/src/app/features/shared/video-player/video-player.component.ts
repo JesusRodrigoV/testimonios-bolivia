@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
-import { VgCoreModule, VgMediaDirective, VgMediaElement } from '@videogular/ngx-videogular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
@@ -11,12 +11,11 @@ import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule,
-
   ],
   templateUrl: './video-player.component.html',
   styleUrl: './video-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoPlayerComponent {
-  videoUrl = input.required<String>();
+  videoUrl = input.required<string>();
 }
