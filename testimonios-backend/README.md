@@ -1,6 +1,6 @@
 # Testimonios Backend
 
-Backend para la aplicación de testimonios "Sistema de archivo de testimonios del Bicentenario" desarrollado con Bun, TypeScript y Prisma.
+Backend de la aplicación "Sistema de archivo de testimonios del Bicentenario" desarrollado con Bun, TypeScript y Prisma.
 
 ## Enlace proyecto Frontend
 
