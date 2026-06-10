@@ -157,8 +157,8 @@ audio {
 
 .description-section {
   margin-bottom: 16px;
-  background: var(--bg-subtle);
-  border-radius: 8px;
+  background: var(--bg-card);
+  border-radius: 12px;
   padding: 12px;
   border: 1px solid var(--border-color);
 }
@@ -197,14 +197,14 @@ audio {
   font-size: 14px;
   margin: 0;
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .transcription {
   margin-bottom: 16px;
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px;
 }
 
@@ -282,11 +282,11 @@ audio {
 .rating-container {
   margin-bottom: 16px;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  background: var(--bg-subtle);
+  background: var(--bg-card);
 }
 
 .rating-title {

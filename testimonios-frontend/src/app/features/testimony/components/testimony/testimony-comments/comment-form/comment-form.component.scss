@@ -34,7 +34,7 @@
       width: 100%;
       padding: 10px 12px;
       font-size: 0.9rem;
-      background: var(--background, #f5f5f5);
+      background: var(--bg-secondary);
       border: 1px solid var(--border-color, #e0e0e0);
       border-radius: 8px;
       outline: none;
@@ -43,6 +43,7 @@
       line-height: 1.5;
       color: var(--text-primary, #333);
       transition: border-color 0.2s;
+      box-sizing: border-box;
 
       &:focus {
         border-color: var(--color-primary, #b8860b);
@@ -64,7 +65,7 @@
       bottom: 8px;
       right: 12px;
       font-size: 0.7rem;
-      color: var(--text-secondary, #999);
+      color: var(--text-muted);
       pointer-events: none;
     }
   }
@@ -76,6 +77,11 @@
 
     .btn-cancel {
       color: var(--text-secondary, #666);
+    }
+
+    .btn-comment {
+      background: var(--color-primary) !important;
+      color: #fff !important;
     }
   }
 }
